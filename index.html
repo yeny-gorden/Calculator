@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kalkulator & Daftar Harga Gorden</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --primary-color: #2196F3;
+            --primary-light-color: #BBDEFB;
+            --accent-color: #00bcd4;
+            --border-color: #424242;
+            --input-bg-color: #333;
+            --table-header-bg: #222;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #kalkulator-gorden {
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .kalkulator-group {
+            margin-bottom: 15px;
+        }
+
+        .kalkulator-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #1565C0;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        #hasil-harga {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #detail-perhitungan {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            border: 1px dashed var(--border-color);
+            font-size: 0.9em;
+            display: none;
+        }
+        #detail-perhitungan p {
+            margin: 0;
+            padding: 3px 0;
+            border-bottom: 1px solid #333;
+        }
+        #detail-perhitungan p:last-child {
+            border-bottom: none;
+        }
+        
+        #vitrase-options {
+            border-top: 1px dashed var(--border-color);
+            padding-top: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        /* Modal Overlay untuk efek floating */
+        #modal-overlay, #secret-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        #form-password, #konten-rahasia {
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            position: relative;
+        }
+        
+        #konten-rahasia {
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        #form-password input {
+            margin-bottom: 10px;
+        }
+        
+        #pesan-error {
+            color: #ff4444;
+            margin-top: 10px;
+        }
+        
+        .kalkulator-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #gear-icon {
+            cursor: pointer;
+            color: #999;
+            font-size: 1.2em;
+        }
+        #gear-icon:hover {
+            color: var(--primary-light-color);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            color: #ff4444;
+        }
+        
+        h1, h2 {
+            color: var(--primary-light-color);
+        }
+        
+        h2.kategori-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: var(--surface-color);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+        td.editable {
+            cursor: pointer;
+            background-color: #333;
+        }
+        td.editable:hover {
+            background-color: #444;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--primary-light-color);
+        }
+        
+        i {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div id="kalkulator-gorden">
+        <div class="kalkulator-header">
+            <h2>Hitung Estimasi Biaya Gorden</h2>
+            <i id="gear-icon" class="fas fa-cog" onclick="togglePasswordForm()"></i>
+        </div>
+        <div class="kalkulator-group">
+            <label for="lebar">Lebar (meter):</label>
+            <input type="number" id="lebar" value="1" min="0.1">
+        </div>
+        <div class="kalkulator-group">
+            <label for="tinggi">Tinggi (meter):</label>
+            <input type="number" id="tinggi" value="2.5" min="0.1">
+        </div>
+        
+        <div class="kalkulator-group">
+            <label for="model-gorden">Pilih Model Gorden:</label>
+            <select id="model-gorden" onchange="toggleModelOptions()">
+                <option value="smokring">Smokring</option>
+                <option value="plisket">Plisket</option>
+                <option value="kupu">Kupu-kupu</option>
+                <option value="blinds">Blinds by Sharppoint</option>
+            </select>
+        </div>
+        
+        <div class="kalkulator-group" id="jenis-kain-group">
+            <label for="jenis-kain">Pilih Jenis Kain:</label>
+            <select id="jenis-kain" onchange="toggleVitraseAsMainFabric()">
+                <option value="import">Kain Import</option>
+                <option value="lokal">Kain Lokal</option>
+                <option value="vitrase">Vitrase</option>
+            </select>
+        </div>
+        
+        <div class="kalkulator-group" id="jasa-group">
+            <label>Jasa:</label>
+            <div class="checkbox-container">
+                <input type="checkbox" id="pakai-instalasi">
+                <label for="pakai-instalasi">Jasa Instalasi</label>
+            </div>
+        </div>
+        
+        <div class="kalkulator-group" id="vitrase-group">
+            <div class="checkbox-container">
+                <input type="checkbox" id="tambah-vitrase" onchange="toggleVitraseOptions()">
+                <label for="tambah-vitrase">Tambahkan Vitrase</label>
+            </div>
+            <div id="vitrase-options">
+                <div class="kalkulator-group">
+                    <label for="lebar-vitrase">Lebar Vitrase (meter):</label>
+                    <input type="number" id="lebar-vitrase" value="1" min="0.1">
+                </div>
+                <div class="kalkulator-group">
+                    <label for="tinggi-vitrase">Tinggi Vitrase (meter):</label>
+                    <input type="number" id="tinggi-vitrase" value="2.5" min="0.1">
+                </div>
+                <div class="kalkulator-group">
+                    <label for="set-vitrase">Jumlah Set Vitrase:</label>
+                    <input type="number" id="set-vitrase" value="1" min="1">
+                </div>
+            </div>
+        </div>
+
+        <button onclick="hitungHarga()">Hitung Total Harga</button>
+        <div id="detail-perhitungan"></div>
+        <div id="hasil-harga"></div>
+    </div>
+
+    <div id="modal-overlay">
+        <div id="form-password">
+            <h2>Menu Pengaturan</h2>
+            <p>Masukkan password untuk mengedit daftar harga.</p>
+            <input type="password" id="input-password" placeholder="Password di sini">
+            <button onclick="cekPassword()">Masuk</button>
+            <p id="pesan-error" style="color: red;"></p>
+        </div>
+    </div>
+
+    <div id="secret-modal-overlay">
+        <div id="konten-rahasia">
+            <button class="close-button" onclick="closeSecretModal()">&times;</button>
+            <h1>Daftar Harga Gorden</h1>
+            <div style="text-align: right; margin-bottom: 10px;">
+                <button onclick="simpanHarga()">Simpan Perubahan</button>
+            </div>
+            
+            <h2 class="kategori-header">Kain</h2>
+            <table id="tabel-kain">
+                <thead>
+                    <tr>
+                        <th>Nama Produk</th>
+                        <th>Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Kain Import</td><td class="editable" data-key="kain.import"></td></tr>
+                    <tr><td>Kain Lokal</td><td class="editable" data-key="kain.lokal"></td></tr>
+                    <tr><td>Kain Vitrase</td><td class="editable" data-key="kain.vitrase"></td></tr>
+                </tbody>
+            </table>
+
+            <h2 class="kategori-header">Aksesoris & Lainnya</h2>
+            <table id="tabel-aksesoris">
+                <thead>
+                    <tr>
+                        <th>Nama Produk</th>
+                        <th>Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Smokring (pcs)</td><td class="editable" data-key="aksesoris.smokring"></td></tr>
+                    <tr><td>Rollet (meter)</td><td class="editable" data-key="aksesoris.rollet"></td></tr>
+                    <tr><td>Rell (meter)</td><td class="editable" data-key="aksesoris.rell"></td></tr>
+                    <tr><td>Stick (pcs)</td><td class="editable" data-key="aksesoris.stick"></td></tr>
+                    <tr><td>Hook (pcs)</td><td class="editable" data-key="aksesoris.hook"></td></tr>
+                    <tr><td>Tali (pcs)</td><td class="editable" data-key="aksesoris.tali"></td></tr>
+                    <tr><td>Blinds (meter persegi)</td><td class="editable" data-key="blinds.sharppoint"></td></tr>
+                </tbody>
+            </table>
+
+            <h2 class="kategori-header">Jasa</h2>
+            <table id="tabel-jasa">
+                <thead>
+                    <tr>
+                        <th>Nama Produk</th>
+                        <th>Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Jasa Jahit (meter)</td><td class="editable" data-key="jasa.jahit"></td></tr>
+                    <tr><td>Jasa Instalasi (flat)</td><td class="editable" data-key="jasa.instalasi"></td></tr>
+                </tbody>
+            </table>
+
+            <p><i>Terakhir diperbarui: 12 Agustus 2025</i></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    var hargaDefault = {
+        kain: { import: 150000, lokal: 65000, vitrase: 100000 },
+        aksesoris: { smokring: 4500, rollet: 65000, rell: 40000, stick: 50000, hook: 37500, tali: 35000 },
+        blinds: { sharppoint: 125000 },
+        jasa: { jahit: 25000, instalasi: 35000 }
+    };
+    
+    var harga = JSON.parse(localStorage.getItem('hargaGorden')) || hargaDefault;
+
+    function muatHargaKeTabel() {
+        document.querySelectorAll('.editable').forEach(cell => {
+            const keys = cell.dataset.key.split('.');
+            let value = harga;
+            for (let key of keys) {
+                if (value === undefined) {
+                    value = null;
+                    break;
+                }
+                value = value[key];
+            }
+            if (value !== null && value !== undefined) {
+                cell.textContent = "Rp " + value.toLocaleString('id-ID');
+            } else {
+                cell.textContent = "Rp 0";
+            }
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        muatHargaKeTabel();
+        toggleModelOptions();
+        toggleVitraseAsMainFabric();
+    });
+    
+    document.getElementById('konten-rahasia').addEventListener('click', function(event) {
+        if (event.target.classList.contains('editable')) {
+            const cell = event.target;
+            const oldValue = parseFloat(cell.textContent.replace(/[Rp.,\s]/g, ''));
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.value = oldValue;
+            
+            cell.innerHTML = '';
+            cell.appendChild(input);
+            input.focus();
+            
+            input.addEventListener('blur', () => {
+                cell.textContent = "Rp " + parseFloat(input.value).toLocaleString('id-ID');
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    input.blur();
+                }
+            });
+        }
+    });
+
+    function simpanHarga() {
+        document.querySelectorAll('.editable').forEach(cell => {
+            const keys = cell.dataset.key.split('.');
+            let parent = harga;
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!parent[keys[i]]) parent[keys[i]] = {};
+                parent = parent[keys[i]];
+            }
+            const finalKey = keys[keys.length - 1];
+            
+            const newValue = parseFloat(cell.textContent.replace(/[Rp.,\s]/g, ''));
+            if (!isNaN(newValue)) {
+                parent[finalKey] = newValue;
+            }
+        });
+        
+        localStorage.setItem('hargaGorden', JSON.stringify(harga));
+        muatHargaKeTabel();
+        alert('Daftar harga berhasil disimpan!');
+        closeSecretModal();
+    }
+
+    function togglePasswordForm() {
+        var modal = document.getElementById("modal-overlay");
+        if (modal.style.display === "none" || modal.style.display === "") {
+            modal.style.display = "flex";
+        } else {
+            modal.style.display = "none";
+        }
+    }
+
+    function cekPassword() {
+        var passwordBenar = "361984";
+        var passwordPengguna = document.getElementById("input-password").value;
+        var pesanError = document.getElementById("pesan-error");
+        var modalPassword = document.getElementById("modal-overlay");
+        var modalRahasia = document.getElementById("secret-modal-overlay");
+
+        if (passwordPengguna === passwordBenar) {
+            modalPassword.style.display = "none";
+            modalRahasia.style.display = "flex";
+            muatHargaKeTabel();
+        } else {
+            pesanError.textContent = "Password salah. Silakan coba lagi.";
+        }
+    }
+
+    function closeSecretModal() {
+        document.getElementById("secret-modal-overlay").style.display = "none";
+    }
+
+    function toggleVitraseOptions() {
+        var vitraseOptions = document.getElementById('vitrase-options');
+        var vitraseCheckbox = document.getElementById('tambah-vitrase');
+        if (vitraseCheckbox.checked) {
+            vitraseOptions.style.display = 'block';
+        } else {
+            vitraseOptions.style.display = 'none';
+        }
+    }
+
+    function toggleModelOptions() {
+        const model = document.getElementById("model-gorden").value;
+        const jenisKainGroup = document.getElementById("jenis-kain-group");
+        const vitraseGroup = document.getElementById("vitrase-group");
+        const jasaGroup = document.getElementById("jasa-group");
+
+        if (model === "blinds") {
+            jenisKainGroup.style.display = "none";
+            vitraseGroup.style.display = "none";
+            jasaGroup.style.display = "none";
+        } else if (model === "kupu") {
+            jenisKainGroup.style.display = "block";
+            vitraseGroup.style.display = "none";
+            document.getElementById("tambah-vitrase").checked = false;
+            toggleVitraseOptions();
+            jasaGroup.style.display = "block";
+        } else { // Smokring and Plisket
+            jenisKainGroup.style.display = "block";
+            vitraseGroup.style.display = "block";
+            jasaGroup.style.display = "block";
+        }
+    }
+
+    function toggleVitraseAsMainFabric() {
+        const jenisKainSelect = document.getElementById('jenis-kain');
+        const vitraseGroup = document.getElementById('vitrase-group');
+        const tambahVitraseCheckbox = document.getElementById('tambah-vitrase');
+        
+        if (jenisKainSelect.value === 'vitrase') {
+            vitraseGroup.style.display = 'none';
+            tambahVitraseCheckbox.checked = false;
+            toggleVitraseOptions();
+        } else {
+            vitraseGroup.style.display = 'block';
+        }
+    }
+
+    // Tambahkan event listener untuk memantau perubahan pada pilihan jenis kain
+    document.getElementById('jenis-kain').addEventListener('change', toggleVitraseAsMainFabric);
+
+    function hitungHarga() {
+        var lebar = parseFloat(document.getElementById("lebar").value);
+        var tinggi = parseFloat(document.getElementById("tinggi").value);
+        var modelGorden = document.getElementById("model-gorden").value;
+        
+        var totalHarga = 0;
+        var detailHTML = '';
+        var totalPanjangKain = 0;
+        
+        if (isNaN(lebar) || isNaN(tinggi) || lebar <= 0 || tinggi <= 0) {
+            document.getElementById("hasil-harga").textContent = "Masukkan lebar dan tinggi yang valid.";
+            document.getElementById("detail-perhitungan").style.display = "none";
+            return;
+        }
+
+        var hargaSaatIni = JSON.parse(localStorage.getItem('hargaGorden')) || hargaDefault;
+
+        // Logika untuk model Blinds
+        if (modelGorden === 'blinds') {
+            const hargaBlinds = hargaSaatIni.blinds.sharppoint;
+            const luas = Math.max(lebar, 1) * Math.max(tinggi, 1);
+            const hargaBlindsItem = luas * hargaBlinds;
+            totalHarga += hargaBlindsItem;
+            detailHTML += `<p><b>Blinds:</b> ${luas.toFixed(2)}m² x Rp ${hargaBlinds.toLocaleString('id-ID')} = Rp ${hargaBlindsItem.toLocaleString('id-ID')}</p>`;
+        } else { // Logika untuk gorden kain (Smokring, Plisket, Kupu)
+            var jenisKain = document.getElementById("jenis-kain").value;
+            var hargaKainItem = 0;
+            var pemakaianKain = 0;
+            var namaKain = '';
+
+            // Perhitungan pemakaian kain
+            if (jenisKain === "import") {
+                namaKain = "Kain Import";
+                pemakaianKain = (lebar + 0.2) * 3;
+                hargaKainItem = pemakaianKain * hargaSaatIni.kain[jenisKain];
+            } else if (jenisKain === "lokal") {
+                namaKain = "Kain Lokal";
+                var a = (lebar + 0.2) / 0.4;
+                var b = Math.ceil(a);
+                var c = b * (tinggi + 0.5);
+                pemakaianKain = c;
+                hargaKainItem = c * hargaSaatIni.kain.lokal;
+            } else if (jenisKain === "vitrase") {
+                namaKain = "Vitrase";
+                pemakaianKain = (lebar + 0.2) * 3;
+                hargaKainItem = pemakaianKain * hargaSaatIni.kain.vitrase;
+            }
+            
+            totalHarga += hargaKainItem;
+            totalPanjangKain += pemakaianKain;
+            detailHTML += `<p><b>${namaKain}:</b> Pemakaian ${pemakaianKain.toFixed(2)}m x Rp ${hargaSaatIni.kain[jenisKain].toLocaleString('id-ID')} = Rp ${hargaKainItem.toLocaleString('id-ID')}</p>`;
+            
+            // Logika untuk vitrase (hanya jika kain utama bukan vitrase)
+            if (jenisKain !== "vitrase" && document.getElementById("tambah-vitrase").checked) {
+                var lebarVitrase = parseFloat(document.getElementById("lebar-vitrase").value);
+                var tinggiVitrase = parseFloat(document.getElementById("tinggi-vitrase").value);
+                var setVitrase = parseInt(document.getElementById("set-vitrase").value);
+
+                if (!isNaN(lebarVitrase) && !isNaN(tinggiVitrase) && !isNaN(setVitrase) && lebarVitrase > 0 && tinggiVitrase > 0 && setVitrase > 0) {
+                    var pemakaianVitrase = (lebarVitrase + 0.2) * 3 * setVitrase;
+                    var hargaVitraseItem = pemakaianVitrase * hargaSaatIni.kain.vitrase;
+                    totalHarga += hargaVitraseItem;
+                    totalPanjangKain += pemakaianVitrase;
+                    detailHTML += `<p><b>Kain Vitrase:</b> Pemakaian ${pemakaianVitrase.toFixed(2)}m (untuk ${setVitrase} set) x Rp ${hargaSaatIni.kain.vitrase.toLocaleString('id-ID')} = Rp ${hargaVitraseItem.toLocaleString('id-ID')}</p>`;
+                    
+                    // Tambahan aksesoris untuk vitrase
+                    if (modelGorden === "smokring" || modelGorden === "plisket") {
+                        var panjangRellVitrase = Math.max(lebarVitrase, 1);
+                        var hargaRellVitraseItem = panjangRellVitrase * hargaSaatIni.aksesoris.rell;
+                        totalHarga += hargaRellVitraseItem;
+                        detailHTML += `<p><b>Rell Vitrase:</b> ${panjangRellVitrase.toFixed(1)}m x Rp ${hargaSaatIni.aksesoris.rell.toLocaleString('id-ID')} = Rp ${hargaRellVitraseItem.toLocaleString('id-ID')}</p>`;
+                    } else if (modelGorden === "kupu") {
+                        var hargaStickVitraseItem = hargaSaatIni.aksesoris.stick;
+                        totalHarga += hargaStickVitraseItem;
+                        detailHTML += `<p><b>Stick Vitrase:</b> 1 pcs x Rp ${hargaStickVitraseItem.toLocaleString('id-ID')} = Rp ${hargaStickVitraseItem.toLocaleString('id-ID')}</p>`;
+                    }
+                }
+            }
+            
+            // Logika aksesoris berdasarkan model
+            if (modelGorden === "smokring") {
+                var totalSmokring = lebar * 24;
+                totalSmokring = Math.ceil(totalSmokring / 2) * 2;
+                var hargaSmokringItem = totalSmokring * hargaSaatIni.aksesoris.smokring;
+                totalHarga += hargaSmokringItem;
+                detailHTML += `<p><b>Smokring:</b> ${totalSmokring} pcs x Rp ${hargaSaatIni.aksesoris.smokring.toLocaleString('id-ID')} = Rp ${hargaSmokringItem.toLocaleString('id-ID')}</p>`;
+                
+                var panjangRollet = Math.max(lebar, 1);
+                var hargaRolletItem = panjangRollet * hargaSaatIni.aksesoris.rollet;
+                totalHarga += hargaRolletItem;
+                detailHTML += `<p><b>Rollet:</b> ${panjangRollet.toFixed(1)}m x Rp ${hargaSaatIni.aksesoris.rollet.toLocaleString('id-ID')} = Rp ${hargaRolletItem.toLocaleString('id-ID')}</p>`;
+                
+                var hargaHookItem = hargaSaatIni.aksesoris.hook;
+                totalHarga += hargaHookItem;
+                detailHTML += `<p><b>Hook:</b> 1 pcs x Rp ${hargaHookItem.toLocaleString('id-ID')} = Rp ${hargaHookItem.toLocaleString('id-ID')}</p>`;
+                
+                var hargaTaliItem = hargaSaatIni.aksesoris.tali;
+                totalHarga += hargaTaliItem;
+                detailHTML += `<p><b>Tali:</b> 1 pcs x Rp ${hargaTaliItem.toLocaleString('id-ID')} = Rp ${hargaTaliItem.toLocaleString('id-ID')}</p>`;
+
+            } else if (modelGorden === "plisket") {
+                var panjangRell = Math.max(lebar, 1);
+                var hargaRellItem = panjangRell * hargaSaatIni.aksesoris.rell;
+                totalHarga += hargaRellItem;
+                detailHTML += `<p><b>Rell:</b> ${panjangRell.toFixed(1)}m x Rp ${hargaSaatIni.aksesoris.rell.toLocaleString('id-ID')} = Rp ${hargaRellItem.toLocaleString('id-ID')}</p>`;
+                
+                var hargaHookItem = hargaSaatIni.aksesoris.hook;
+                totalHarga += hargaHookItem;
+                detailHTML += `<p><b>Hook:</b> 1 pcs x Rp ${hargaHookItem.toLocaleString('id-ID')} = Rp ${hargaHookItem.toLocaleString('id-ID')}</p>`;
+                
+                var hargaTaliItem = hargaSaatIni.aksesoris.tali;
+                totalHarga += hargaTaliItem;
+                detailHTML += `<p><b>Tali:</b> 1 pcs x Rp ${hargaTaliItem.toLocaleString('id-ID')} = Rp ${hargaTaliItem.toLocaleString('id-ID')}</p>`;
+
+            } else if (modelGorden === "kupu") {
+                var hargaStickItem = hargaSaatIni.aksesoris.stick;
+                totalHarga += hargaStickItem;
+                detailHTML += `<p><b>Stick:</b> 1 pcs x Rp ${hargaStickItem.toLocaleString('id-ID')} = Rp ${hargaStickItem.toLocaleString('id-ID')}</p>`;
+            }
+            
+            // Jasa Jahit (otomatis dihitung untuk gorden kain, termasuk vitrase jika ada)
+            var hargaJahitItem = totalPanjangKain * hargaSaatIni.jasa.jahit;
+            totalHarga += hargaJahitItem;
+            detailHTML += `<p><b>Jasa Jahit:</b> Pemakaian total kain ${totalPanjangKain.toFixed(2)}m x Rp ${hargaSaatIni.jasa.jahit.toLocaleString('id-ID')} = Rp ${hargaJahitItem.toLocaleString('id-ID')}</p>`;
+
+            // Jasa Instalasi (jika dicentang)
+            if (document.getElementById("pakai-instalasi").checked) {
+                var hargaInstalasiItem = hargaSaatIni.jasa.instalasi;
+                totalHarga += hargaInstalasiItem;
+                detailHTML += `<p><b>Jasa Instalasi:</b> 1 x Rp ${hargaInstalasiItem.toLocaleString('id-ID')} = Rp ${hargaInstalasiItem.toLocaleString('id-ID')}</p>`;
+            }
+        }
+        
+        document.getElementById("detail-perhitungan").innerHTML = `<h3>Rincian Perhitungan</h3>${detailHTML}`;
+        document.getElementById("detail-perhitungan").style.display = "block";
+        document.getElementById("hasil-harga").textContent = "Total: Rp " + totalHarga.toLocaleString('id-ID');
+    }
+</script>
+
+</body>
+</html>
