@@ -1,0 +1,15 @@
+{
+  "prices": {
+    "kain_import": 150000,
+    "kain_lokal": 65000,
+    "kain_vitrase": 100000,
+    "smokring": 4500,
+    "rollet": 65000,
+    "rell": 40000,
+    "stick": 50000,
+    "hook": 37500,
+    "tali": 35000,
+    "jahit": 15000,
+    "instalasi": 35000
+  }
+}
