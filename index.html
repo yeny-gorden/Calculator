@@ -1,674 +1,630 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Kalkulator & Daftar Harga Gorden</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Yeny Gorden Calculator</title>
     <style>
-        :root {
-            --bg-color: #121212;
-            --surface-color: #1e1e1e;
-            --text-color: #e0e0e0;
-            --primary-color: #2196F3;
-            --primary-light-color: #BBDEFB;
-            --accent-color: #00bcd4;
-            --border-color: #424242;
-            --input-bg-color: #333;
-            --table-header-bg: #222;
-        }
-
         body {
+            background-color: #000;
+            color: #fff;
             font-family: Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
             margin: 0;
             padding: 20px;
-            line-height: 1.6;
         }
-        
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        #kalkulator-gorden {
-            background-color: var(--surface-color);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .kalkulator-group {
-            margin-bottom: 15px;
-        }
-
-        .kalkulator-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        input[type="number"], select {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--input-bg-color);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            box-sizing: border-box;
-            -webkit-appearance: none;
-            -moz-appearance: textfield;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #1565C0;
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .checkbox-container input {
-            width: auto;
-            margin-right: 10px;
-        }
-
-        #hasil-harga {
-            font-size: 1.6em;
-            font-weight: bold;
-            color: var(--accent-color);
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        #detail-perhitungan {
-            background-color: #2a2a2a;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 15px;
-            border: 1px dashed var(--border-color);
-            font-size: 0.9em;
-            display: none;
-        }
-        #detail-perhitungan p {
-            margin: 0;
-            padding: 3px 0;
-            border-bottom: 1px solid #333;
-        }
-        #detail-perhitungan p:last-child {
-            border-bottom: none;
-        }
-        
-        #vitrase-options {
-            border-top: 1px dashed var(--border-color);
-            padding-top: 15px;
-            margin-top: 15px;
-            display: none;
-        }
-        
-        /* Modal Overlay untuk efek floating */
-        #modal-overlay, #secret-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        #form-password, #konten-rahasia {
-            background-color: var(--surface-color);
-            border-radius: 8px;
-            padding: 20px;
-            width: 90%;
             max-width: 400px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin: 0 auto;
+            border: 1px solid #333;
+            padding: 20px;
+            background-color: #111;
+        }
+        .header {
             text-align: center;
+            padding-bottom: 20px;
+            font-size: 24px;
             position: relative;
-        }
-        
-        #konten-rahasia {
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            text-align: left;
-        }
-
-        #form-password input {
-            margin-bottom: 10px;
-        }
-        
-        #pesan-error {
-            color: #ff4444;
-            margin-top: 10px;
-        }
-        
-        .kalkulator-header {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
         }
-        
-        #gear-icon {
+        .header-text {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .settings-icon {
+            font-size: 24px;
             cursor: pointer;
-            color: #999;
-            font-size: 1.2em;
+            color: #d9534f;
+            line-height: 1;
         }
-        #gear-icon:hover {
-            color: var(--primary-light-color);
-        }
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.5em;
+        .logo-image {
+            height: 48px; /* Ukuran gambar diperbesar */
             cursor: pointer;
         }
-        .close-button:hover {
-            color: #ff4444;
+        .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: nowrap;
         }
-        
-        h1, h2 {
-            color: var(--primary-light-color);
+        .input-group label {
+            white-space: nowrap;
+            margin-right: 10px;
+            flex-grow: 1;
         }
-        
-        h2.kategori-header {
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 5px;
+        .input-group input, .input-group select {
+            padding: 8px;
+            border: 1px solid #555;
+            background-color: #222;
+            color: #fff;
+            width: auto;
+            flex-grow: 1;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .checkbox-group label {
+            flex: 1;
+        }
+        .vitras-options,
+        .blind-options {
+            display: none;
+            border: 1px dashed #555;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .blind-options .harga-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .blind-options .harga-group label {
+            margin-bottom: 5px;
+        }
+        .blind-options .harga-group input {
+            width: 100%;
+        }
+        .button {
+            width: 100%;
+            padding: 15px;
             margin-top: 20px;
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            text-transform: uppercase;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            background-color: var(--surface-color);
+            margin-top: 20px;
+            color: #fff;
         }
-
+        table, th, td {
+            border: 1px solid #555;
+        }
         th, td {
-            border: 1px solid var(--border-color);
-            padding: 10px;
+            padding: 8px;
             text-align: left;
         }
-        td.editable {
+        #rincian {
+            display: none;
+        }
+        .vitras-header {
+            text-align: center !important;
+            font-weight: bold;
+        }
+        #pengaturan-harga {
+            display: none;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        #pengaturan-harga h3 {
+            margin-top: 0;
+            text-align: center;
+        }
+        #pengaturan-harga table {
+            margin-top: 0;
+            width: 100%;
+        }
+        #pengaturan-harga td {
+            border: none;
+            padding: 5px 0;
+        }
+        #pengaturan-harga td input {
+            width: 90%;
+            padding: 5px;
+        }
+        .pengaturan-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .pengaturan-buttons button {
+            width: 50%;
+            padding: 10px;
+            border: none;
             cursor: pointer;
-            background-color: #333;
         }
-        td.editable:hover {
-            background-color: #444;
+        #simpan-btn {
+            background-color: #28a745;
+            color: #fff;
         }
-
-        th {
-            background-color: var(--table-header-bg);
-            color: var(--primary-light-color);
-        }
-        
-        i {
-            color: #999;
+        #reset-btn {
+            background-color: #dc3545;
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-
-    <div id="kalkulator-gorden">
-        <div class="kalkulator-header">
-            <h2>Hitung Estimasi Biaya Gorden</h2>
-            <i id="gear-icon" class="fas fa-cog" onclick="togglePasswordForm()"></i>
-        </div>
-        <div class="kalkulator-group">
-            <label for="lebar">Lebar (meter):</label>
-            <input type="number" id="lebar" value="1" min="0.1">
-        </div>
-        <div class="kalkulator-group">
-            <label for="tinggi">Tinggi (meter):</label>
-            <input type="number" id="tinggi" value="2.5" min="0.1">
-        </div>
-        
-        <div class="kalkulator-group">
-            <label for="model-gorden">Pilih Model Gorden:</label>
-            <select id="model-gorden" onchange="toggleModelOptions()">
-                <option value="smokring">Smokring</option>
-                <option value="plisket">Plisket</option>
-                <option value="kupu">Kupu-kupu</option>
-                <option value="blinds">Blinds by Sharppoint</option>
-            </select>
-        </div>
-        
-        <div class="kalkulator-group" id="jenis-kain-group">
-            <label for="jenis-kain">Pilih Jenis Kain:</label>
-            <select id="jenis-kain" onchange="toggleVitraseAsMainFabric()">
-                <option value="import">Kain Import</option>
-                <option value="lokal">Kain Lokal</option>
-                <option value="vitrase">Vitrase</option>
-            </select>
-        </div>
-        
-        <div class="kalkulator-group" id="jasa-group">
-            <label>Jasa:</label>
-            <div class="checkbox-container">
-                <input type="checkbox" id="pakai-instalasi">
-                <label for="pakai-instalasi">Jasa Instalasi</label>
-            </div>
-        </div>
-        
-        <div class="kalkulator-group" id="vitrase-group">
-            <div class="checkbox-container">
-                <input type="checkbox" id="tambah-vitrase" onchange="toggleVitraseOptions()">
-                <label for="tambah-vitrase">Tambahkan Vitrase</label>
-            </div>
-            <div id="vitrase-options">
-                <div class="kalkulator-group">
-                    <label for="lebar-vitrase">Lebar Vitrase (meter):</label>
-                    <input type="number" id="lebar-vitrase" value="1" min="0.1">
-                </div>
-                <div class="kalkulator-group">
-                    <label for="tinggi-vitrase">Tinggi Vitrase (meter):</label>
-                    <input type="number" id="tinggi-vitrase" value="2.5" min="0.1">
-                </div>
-                <div class="kalkulator-group">
-                    <label for="set-vitrase">Jumlah Set Vitrase:</label>
-                    <input type="number" id="set-vitrase" value="1" min="1">
-                </div>
-            </div>
-        </div>
-
-        <button onclick="hitungHarga()">Hitung Total Harga</button>
-        <div id="detail-perhitungan"></div>
-        <div id="hasil-harga"></div>
+    <div class="header">
+        <div class="header-text">Yeny Gorden</div>
+        <img src="https://yeny-gorden.github.io/Calculator/logo.png" alt="Logo" class="logo-image" onclick="togglePengaturan()">
     </div>
-
-    <div id="modal-overlay">
-        <div id="form-password">
-            <h2>Menu Pengaturan</h2>
-            <p>Masukkan password untuk mengedit daftar harga.</p>
-            <input type="password" id="input-password" placeholder="Password di sini">
-            <button onclick="cekPassword()">Masuk</button>
-            <p id="pesan-error" style="color: red;"></p>
+    
+    <div id="pengaturan-harga">
+        <h3>Pengaturan Harga</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Harga</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Kain Import (per m)</td>
+                    <td><input type="number" id="harga_import" step="1000"></td>
+                </tr>
+                <tr>
+                    <td>Kain Lokal (per m)</td>
+                    <td><input type="number" id="harga_lokal" step="1000"></td>
+                </tr>
+                <tr>
+                    <td>Kain Vitrase (per m)</td>
+                    <td><input type="number" id="harga_vitrase_kain" step="1000"></td>
+                </tr>
+                <tr>
+                    <td>Jahit (per m)</td>
+                    <td><input type="number" id="harga_jahit" step="1000"></td>
+                </tr>
+                <tr>
+                    <td>Smokring (per buah)</td>
+                    <td><input type="number" id="harga_smokring" step="100"></td>
+                </tr>
+                <tr>
+                    <td>Rollet (per m)</td>
+                    <td><input type="number" id="harga_rollet" step="1000"></td>
+                </tr>
+                <tr>
+                    <td>Rell (per m)</td>
+                    <td><input type="number" id="harga_rell" step="1000"></td>
+                </tr>
+                <tr>
+                    <td>Hook & Tali (per set)</td>
+                    <td><input type="number" id="harga_hook_tali" step="1000"></td>
+                </tr>
+                <tr>
+                    <td>Stick (per set)</td>
+                    <td><input type="number" id="harga_stick" step="100"></td>
+                </tr>
+                <tr>
+                    <td>Instalasi (per set)</td>
+                    <td><input type="number" id="harga_instalasi" step="1000"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pengaturan-buttons">
+            <button id="simpan-btn">Simpan Pengaturan</button>
+            <button id="reset-btn">Reset ke Harga Default</button>
         </div>
     </div>
+    
+    <div class="input-group">
+        <label for="lebar">Lebar (meter)</label>
+        <input type="number" id="lebar" value="1.2" step="0.1" style="width: 50%;">
+    </div>
 
-    <div id="secret-modal-overlay">
-        <div id="konten-rahasia">
-            <button class="close-button" onclick="closeSecretModal()">&times;</button>
-            <h1>Daftar Harga Gorden</h1>
-            <div style="text-align: right; margin-bottom: 10px;">
-                <button onclick="simpanHarga()">Simpan Perubahan</button>
-            </div>
-            
-            <h2 class="kategori-header">Kain</h2>
-            <table id="tabel-kain">
-                <thead>
-                    <tr>
-                        <th>Nama Produk</th>
-                        <th>Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Kain Import</td><td class="editable" data-key="kain.import"></td></tr>
-                    <tr><td>Kain Lokal</td><td class="editable" data-key="kain.lokal"></td></tr>
-                    <tr><td>Kain Vitrase</td><td class="editable" data-key="kain.vitrase"></td></tr>
-                </tbody>
-            </table>
+    <div class="input-group">
+        <label for="tinggi">Tinggi (meter)</label>
+        <input type="number" id="tinggi" value="2.5" step="0.1" style="width: 50%;">
+    </div>
 
-            <h2 class="kategori-header">Aksesoris & Lainnya</h2>
-            <table id="tabel-aksesoris">
-                <thead>
-                    <tr>
-                        <th>Nama Produk</th>
-                        <th>Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Smokring (pcs)</td><td class="editable" data-key="aksesoris.smokring"></td></tr>
-                    <tr><td>Rollet (meter)</td><td class="editable" data-key="aksesoris.rollet"></td></tr>
-                    <tr><td>Rell (meter)</td><td class="editable" data-key="aksesoris.rell"></td></tr>
-                    <tr><td>Stick (pcs)</td><td class="editable" data-key="aksesoris.stick"></td></tr>
-                    <tr><td>Hook (pcs)</td><td class="editable" data-key="aksesoris.hook"></td></tr>
-                    <tr><td>Tali (pcs)</td><td class="editable" data-key="aksesoris.tali"></td></tr>
-                    <tr><td>Blinds (meter persegi)</td><td class="editable" data-key="blinds.sharppoint"></td></tr>
-                </tbody>
-            </table>
+    <div class="input-group">
+        <label for="model">Pilihan Model</label>
+        <select id="model">
+            <option value="">Pilih Model..</option>
+            <option value="smokring">SMOKRING</option>
+            <option value="plisket">PLISKET</option>
+            <option value="kupu">KUPU</option>
+            <option value="blinds">Blinds By Sharppoint</option>
+        </select>
+    </div>
 
-            <h2 class="kategori-header">Jasa</h2>
-            <table id="tabel-jasa">
-                <thead>
-                    <tr>
-                        <th>Nama Produk</th>
-                        <th>Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Jasa Jahit (meter)</td><td class="editable" data-key="jasa.jahit"></td></tr>
-                    <tr><td>Jasa Instalasi (flat)</td><td class="editable" data-key="jasa.instalasi"></td></tr>
-                </tbody>
-            </table>
-
-            <p><i>Terakhir diperbarui: 12 Agustus 2025</i></p>
+    <div class="input-group">
+        <label for="kain">Pilihan Kain</label>
+        <select id="kain">
+            <option value="">Pilih Kain..</option>
+            <option value="kain-import">KAIN IMPORT</option>
+            <option value="kain-lokal">KAIN LOKAL</option>
+            <option value="kain-vitrase">KAIN VITRASE</option>
+        </select>
+    </div>
+    
+    <div class="blind-options">
+        <div class="harga-group">
+            <label for="harga_blind">Harga Blind Manual (per m²)</label>
+            <input type="number" id="harga_blind" step="1000">
         </div>
+    </div>
+    
+    <div class="checkbox-group" id="vitras-group">
+        <label for="tambah_vitras">Tambah Vitras</label>
+        <input type="checkbox" id="tambah_vitras">
+    </div>
+
+    <div class="vitras-options">
+        <div class="input-group">
+            <label for="model_vitras">Model Vitras</label>
+            <select id="model_vitras">
+                <option value="">Pilih Model..</option>
+                <option value="plisket">PLISKET</option>
+                <option value="kupu">KUPU</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="lebar_vitras">Lebar Vitras (meter)</label>
+            <input type="number" id="lebar_vitras" step="0.1" style="width: 50%;">
+        </div>
+        <div class="input-group">
+            <label for="tinggi_vitras">Tinggi Vitras (meter)</label>
+            <input type="number" id="tinggi_vitras" step="0.1" style="width: 50%;">
+        </div>
+    </div>
+
+    <div class="checkbox-group">
+        <label for="instalasi">Instalasi</label>
+        <input type="checkbox" id="instalasi">
+    </div>
+    
+    <div class="checkbox-group">
+        <label for="diskon_aktif">Diskon</label>
+        <input type="checkbox" id="diskon_aktif">
+    </div>
+    <div class="input-group" id="diskon_input_group" style="display: none;">
+        <label for="diskon_persen">Diskon (%)</label>
+        <input type="number" id="diskon_persen" value="0" min="0" max="100" step="1">
+    </div>
+
+    <button class="button" onclick="hitungHarga()">
+        Hitung
+    </button>
+
+    <div id="rincian">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Jumlah</th>
+                    <th>Harga</th>
+                </tr>
+            </thead>
+            <tbody id="rincian-body"></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2">Total</td>
+                    <td id="total-harga">Rp.0</td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
 </div>
 
 <script>
-    var hargaDefault = {
-        kain: { import: 150000, lokal: 65000, vitrase: 100000 },
-        aksesoris: { smokring: 4500, rollet: 65000, rell: 40000, stick: 50000, hook: 37500, tali: 35000 },
-        blinds: { sharppoint: 125000 },
-        jasa: { jahit: 25000, instalasi: 35000 }
+    const defaultPrices = {
+        harga_import: 150000,
+        harga_lokal: 60000,
+        harga_vitrase_kain: 100000,
+        harga_jahit: 15000,
+        harga_smokring: 4500,
+        harga_rollet: 65000,
+        harga_rell: 40000,
+        harga_hook_tali: 72500,
+        harga_stick: 50000,
+        harga_instalasi: 35000
     };
-    
-    var harga = JSON.parse(localStorage.getItem('hargaGorden')) || hargaDefault;
 
-    function muatHargaKeTabel() {
-        document.querySelectorAll('.editable').forEach(cell => {
-            const keys = cell.dataset.key.split('.');
-            let value = harga;
-            for (let key of keys) {
-                if (value === undefined) {
-                    value = null;
-                    break;
-                }
-                value = value[key];
+    function loadPrices() {
+        let prices = {};
+        for (const key in defaultPrices) {
+            const savedPrice = localStorage.getItem(key);
+            prices[key] = savedPrice ? parseFloat(savedPrice) : defaultPrices[key];
+            const inputElement = document.getElementById(key);
+            if (inputElement) {
+                inputElement.value = prices[key];
             }
-            if (value !== null && value !== undefined) {
-                cell.textContent = "Rp " + value.toLocaleString('id-ID');
-            } else {
-                cell.textContent = "Rp 0";
-            }
-        });
+        }
+        return prices;
     }
+
+    function savePrices() {
+        for (const key in defaultPrices) {
+            const inputElement = document.getElementById(key);
+            if (inputElement) {
+                localStorage.setItem(key, inputElement.value);
+            }
+        }
+        alert('Pengaturan harga berhasil disimpan!');
+    }
+
+    function resetPrices() {
+        for (const key in defaultPrices) {
+            localStorage.removeItem(key);
+        }
+        loadPrices();
+        alert('Pengaturan harga telah direset ke nilai default!');
+    }
+
+    document.getElementById('simpan-btn').addEventListener('click', savePrices);
+    document.getElementById('reset-btn').addEventListener('click', resetPrices);
     
-    document.addEventListener('DOMContentLoaded', () => {
-        muatHargaKeTabel();
-        toggleModelOptions();
-        toggleVitraseAsMainFabric();
+    function togglePengaturan() {
+        const pengaturan = document.getElementById('pengaturan-harga');
+        if (pengaturan.style.display === 'block') {
+            pengaturan.style.display = 'none';
+        } else {
+            pengaturan.style.display = 'block';
+        }
+    }
+
+    window.onload = function() {
+        loadPrices();
+    };
+
+    document.getElementById('kain').addEventListener('change', function() {
+        const kain = this.value;
+        const vitrasGroup = document.getElementById('vitras-group');
+        const tambahVitrasCheckbox = document.getElementById('tambah_vitras');
+        const vitrasOptions = document.querySelector('.vitras-options');
+
+        if (kain === "kain-vitrase") {
+            vitrasGroup.style.display = 'none';
+            tambahVitrasCheckbox.checked = false;
+            vitrasOptions.style.display = 'none';
+        } else {
+            vitrasGroup.style.display = 'flex';
+        }
     });
-    
-    document.getElementById('konten-rahasia').addEventListener('click', function(event) {
-        if (event.target.classList.contains('editable')) {
-            const cell = event.target;
-            const oldValue = parseFloat(cell.textContent.replace(/[Rp.,\s]/g, ''));
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.value = oldValue;
-            
-            cell.innerHTML = '';
-            cell.appendChild(input);
-            input.focus();
-            
-            input.addEventListener('blur', () => {
-                cell.textContent = "Rp " + parseFloat(input.value).toLocaleString('id-ID');
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    input.blur();
-                }
-            });
+
+    document.getElementById('tambah_vitras').addEventListener('change', function() {
+        const vitrasOptions = document.querySelector('.vitras-options');
+        if (this.checked) {
+            vitrasOptions.style.display = 'block';
+        } else {
+            vitrasOptions.style.display = 'none';
         }
     });
 
-    function simpanHarga() {
-        document.querySelectorAll('.editable').forEach(cell => {
-            const keys = cell.dataset.key.split('.');
-            let parent = harga;
-            for (let i = 0; i < keys.length - 1; i++) {
-                if (!parent[keys[i]]) parent[keys[i]] = {};
-                parent = parent[keys[i]];
-            }
-            const finalKey = keys[keys.length - 1];
-            
-            const newValue = parseFloat(cell.textContent.replace(/[Rp.,\s]/g, ''));
-            if (!isNaN(newValue)) {
-                parent[finalKey] = newValue;
-            }
-        });
-        
-        localStorage.setItem('hargaGorden', JSON.stringify(harga));
-        muatHargaKeTabel();
-        alert('Daftar harga berhasil disimpan!');
-        closeSecretModal();
-    }
-
-    function togglePasswordForm() {
-        var modal = document.getElementById("modal-overlay");
-        if (modal.style.display === "none" || modal.style.display === "") {
-            modal.style.display = "flex";
-        } else {
-            modal.style.display = "none";
-        }
-    }
-
-    function cekPassword() {
-        var passwordBenar = "361984";
-        var passwordPengguna = document.getElementById("input-password").value;
-        var pesanError = document.getElementById("pesan-error");
-        var modalPassword = document.getElementById("modal-overlay");
-        var modalRahasia = document.getElementById("secret-modal-overlay");
-
-        if (passwordPengguna === passwordBenar) {
-            modalPassword.style.display = "none";
-            modalRahasia.style.display = "flex";
-            muatHargaKeTabel();
-        } else {
-            pesanError.textContent = "Password salah. Silakan coba lagi.";
-        }
-    }
-
-    function closeSecretModal() {
-        document.getElementById("secret-modal-overlay").style.display = "none";
-    }
-
-    function toggleVitraseOptions() {
-        var vitraseOptions = document.getElementById('vitrase-options');
-        var vitraseCheckbox = document.getElementById('tambah-vitrase');
-        if (vitraseCheckbox.checked) {
-            vitraseOptions.style.display = 'block';
-        } else {
-            vitraseOptions.style.display = 'none';
-        }
-    }
-
-    function toggleModelOptions() {
-        const model = document.getElementById("model-gorden").value;
-        const jenisKainGroup = document.getElementById("jenis-kain-group");
-        const vitraseGroup = document.getElementById("vitrase-group");
-        const jasaGroup = document.getElementById("jasa-group");
+    document.getElementById('model').addEventListener('change', function() {
+        const model = this.value;
+        const blindOptions = document.querySelector('.blind-options');
+        const kainGroup = document.querySelector('.input-group select#kain').closest('.input-group');
+        const vitrasGroup = document.getElementById('vitras-group');
 
         if (model === "blinds") {
-            jenisKainGroup.style.display = "none";
-            vitraseGroup.style.display = "none";
-            jasaGroup.style.display = "none";
-        } else if (model === "kupu") {
-            jenisKainGroup.style.display = "block";
-            vitraseGroup.style.display = "none";
-            document.getElementById("tambah-vitrase").checked = false;
-            toggleVitraseOptions();
-            jasaGroup.style.display = "block";
-        } else { // Smokring and Plisket
-            jenisKainGroup.style.display = "block";
-            vitraseGroup.style.display = "block";
-            jasaGroup.style.display = "block";
-        }
-    }
-
-    function toggleVitraseAsMainFabric() {
-        const jenisKainSelect = document.getElementById('jenis-kain');
-        const vitraseGroup = document.getElementById('vitrase-group');
-        const tambahVitraseCheckbox = document.getElementById('tambah-vitrase');
-        
-        if (jenisKainSelect.value === 'vitrase') {
-            vitraseGroup.style.display = 'none';
-            tambahVitraseCheckbox.checked = false;
-            toggleVitraseOptions();
+            blindOptions.style.display = 'block';
+            kainGroup.style.display = 'none';
+            vitrasGroup.style.display = 'none';
+            document.getElementById('tambah_vitras').checked = false;
+            document.querySelector('.vitras-options').style.display = 'none';
         } else {
-            vitraseGroup.style.display = 'block';
+            blindOptions.style.display = 'none';
+            kainGroup.style.display = 'flex';
+            vitrasGroup.style.display = 'flex';
         }
-    }
+    });
+    
+    document.getElementById('diskon_aktif').addEventListener('change', function() {
+        const diskonInputGroup = document.getElementById('diskon_input_group');
+        if (this.checked) {
+            diskonInputGroup.style.display = 'flex';
+        } else {
+            diskonInputGroup.style.display = 'none';
+        }
+    });
 
-    // Tambahkan event listener untuk memantau perubahan pada pilihan jenis kain
-    document.getElementById('jenis-kain').addEventListener('change', toggleVitraseAsMainFabric);
+    function formatRupiah(number) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(number);
+    }
 
     function hitungHarga() {
-        var lebar = parseFloat(document.getElementById("lebar").value);
-        var tinggi = parseFloat(document.getElementById("tinggi").value);
-        var modelGorden = document.getElementById("model-gorden").value;
-        
-        var totalHarga = 0;
-        var detailHTML = '';
-        var totalPanjangKain = 0;
-        
-        if (isNaN(lebar) || isNaN(tinggi) || lebar <= 0 || tinggi <= 0) {
-            document.getElementById("hasil-harga").textContent = "Masukkan lebar dan tinggi yang valid.";
-            document.getElementById("detail-perhitungan").style.display = "none";
+        const lebar = parseFloat(document.getElementById('lebar').value);
+        const tinggi = parseFloat(document.getElementById('tinggi').value);
+        const model = document.getElementById('model').value;
+        const kain = document.getElementById('kain').value;
+        const tambahVitras = document.getElementById('tambah_vitras').checked;
+        const instalasi = document.getElementById('instalasi').checked;
+        const diskonAktif = document.getElementById('diskon_aktif').checked;
+        const diskonPersen = parseFloat(document.getElementById('diskon_persen').value);
+
+        if (isNaN(lebar) || isNaN(tinggi) || model === "") {
+            alert("Mohon lengkapi semua data Lebar, Tinggi, dan Pilihan Model.");
+            document.getElementById('rincian').style.display = 'none';
             return;
         }
 
-        var hargaSaatIni = JSON.parse(localStorage.getItem('hargaGorden')) || hargaDefault;
-
-        // Logika untuk model Blinds
-        if (modelGorden === 'blinds') {
-            const hargaBlinds = hargaSaatIni.blinds.sharppoint;
-            const luas = Math.max(lebar, 1) * Math.max(tinggi, 1);
-            const hargaBlindsItem = luas * hargaBlinds;
-            totalHarga += hargaBlindsItem;
-            detailHTML += `<p><b>Blinds:</b> ${luas.toFixed(2)}m² x Rp ${hargaBlinds.toLocaleString('id-ID')} = Rp ${hargaBlindsItem.toLocaleString('id-ID')}</p>`;
-        } else { // Logika untuk gorden kain (Smokring, Plisket, Kupu)
-            var jenisKain = document.getElementById("jenis-kain").value;
-            var hargaKainItem = 0;
-            var pemakaianKain = 0;
-            var namaKain = '';
-
-            // Perhitungan pemakaian kain
-            if (jenisKain === "import") {
-                namaKain = "Kain Import";
-                pemakaianKain = (lebar + 0.2) * 3;
-                hargaKainItem = pemakaianKain * hargaSaatIni.kain[jenisKain];
-            } else if (jenisKain === "lokal") {
-                namaKain = "Kain Lokal";
-                var a = (lebar + 0.2) / 0.4;
-                var b = Math.ceil(a);
-                var c = b * (tinggi + 0.5);
-                pemakaianKain = c;
-                hargaKainItem = c * hargaSaatIni.kain.lokal;
-            } else if (jenisKain === "vitrase") {
-                namaKain = "Vitrase";
-                pemakaianKain = (lebar + 0.2) * 3;
-                hargaKainItem = pemakaianKain * hargaSaatIni.kain.vitrase;
-            }
-            
-            totalHarga += hargaKainItem;
-            totalPanjangKain += pemakaianKain;
-            detailHTML += `<p><b>${namaKain}:</b> Pemakaian ${pemakaianKain.toFixed(2)}m x Rp ${hargaSaatIni.kain[jenisKain].toLocaleString('id-ID')} = Rp ${hargaKainItem.toLocaleString('id-ID')}</p>`;
-            
-            // Logika untuk vitrase (hanya jika kain utama bukan vitrase)
-            if (jenisKain !== "vitrase" && document.getElementById("tambah-vitrase").checked) {
-                var lebarVitrase = parseFloat(document.getElementById("lebar-vitrase").value);
-                var tinggiVitrase = parseFloat(document.getElementById("tinggi-vitrase").value);
-                var setVitrase = parseInt(document.getElementById("set-vitrase").value);
-
-                if (!isNaN(lebarVitrase) && !isNaN(tinggiVitrase) && !isNaN(setVitrase) && lebarVitrase > 0 && tinggiVitrase > 0 && setVitrase > 0) {
-                    var pemakaianVitrase = (lebarVitrase + 0.2) * 3 * setVitrase;
-                    var hargaVitraseItem = pemakaianVitrase * hargaSaatIni.kain.vitrase;
-                    totalHarga += hargaVitraseItem;
-                    totalPanjangKain += pemakaianVitrase;
-                    detailHTML += `<p><b>Kain Vitrase:</b> Pemakaian ${pemakaianVitrase.toFixed(2)}m (untuk ${setVitrase} set) x Rp ${hargaSaatIni.kain.vitrase.toLocaleString('id-ID')} = Rp ${hargaVitraseItem.toLocaleString('id-ID')}</p>`;
-                    
-                    // Tambahan aksesoris untuk vitrase
-                    if (modelGorden === "smokring" || modelGorden === "plisket") {
-                        var panjangRellVitrase = Math.max(lebarVitrase, 1);
-                        var hargaRellVitraseItem = panjangRellVitrase * hargaSaatIni.aksesoris.rell;
-                        totalHarga += hargaRellVitraseItem;
-                        detailHTML += `<p><b>Rell Vitrase:</b> ${panjangRellVitrase.toFixed(1)}m x Rp ${hargaSaatIni.aksesoris.rell.toLocaleString('id-ID')} = Rp ${hargaRellVitraseItem.toLocaleString('id-ID')}</p>`;
-                    } else if (modelGorden === "kupu") {
-                        var hargaStickVitraseItem = hargaSaatIni.aksesoris.stick;
-                        totalHarga += hargaStickVitraseItem;
-                        detailHTML += `<p><b>Stick Vitrase:</b> 1 pcs x Rp ${hargaStickVitraseItem.toLocaleString('id-ID')} = Rp ${hargaStickVitraseItem.toLocaleString('id-ID')}</p>`;
-                    }
-                }
-            }
-            
-            // Logika aksesoris berdasarkan model
-            if (modelGorden === "smokring") {
-                var totalSmokring = lebar * 24;
-                totalSmokring = Math.ceil(totalSmokring / 2) * 2;
-                var hargaSmokringItem = totalSmokring * hargaSaatIni.aksesoris.smokring;
-                totalHarga += hargaSmokringItem;
-                detailHTML += `<p><b>Smokring:</b> ${totalSmokring} pcs x Rp ${hargaSaatIni.aksesoris.smokring.toLocaleString('id-ID')} = Rp ${hargaSmokringItem.toLocaleString('id-ID')}</p>`;
-                
-                var panjangRollet = Math.max(lebar, 1);
-                var hargaRolletItem = panjangRollet * hargaSaatIni.aksesoris.rollet;
-                totalHarga += hargaRolletItem;
-                detailHTML += `<p><b>Rollet:</b> ${panjangRollet.toFixed(1)}m x Rp ${hargaSaatIni.aksesoris.rollet.toLocaleString('id-ID')} = Rp ${hargaRolletItem.toLocaleString('id-ID')}</p>`;
-                
-                var hargaHookItem = hargaSaatIni.aksesoris.hook;
-                totalHarga += hargaHookItem;
-                detailHTML += `<p><b>Hook:</b> 1 pcs x Rp ${hargaHookItem.toLocaleString('id-ID')} = Rp ${hargaHookItem.toLocaleString('id-ID')}</p>`;
-                
-                var hargaTaliItem = hargaSaatIni.aksesoris.tali;
-                totalHarga += hargaTaliItem;
-                detailHTML += `<p><b>Tali:</b> 1 pcs x Rp ${hargaTaliItem.toLocaleString('id-ID')} = Rp ${hargaTaliItem.toLocaleString('id-ID')}</p>`;
-
-            } else if (modelGorden === "plisket") {
-                var panjangRell = Math.max(lebar, 1);
-                var hargaRellItem = panjangRell * hargaSaatIni.aksesoris.rell;
-                totalHarga += hargaRellItem;
-                detailHTML += `<p><b>Rell:</b> ${panjangRell.toFixed(1)}m x Rp ${hargaSaatIni.aksesoris.rell.toLocaleString('id-ID')} = Rp ${hargaRellItem.toLocaleString('id-ID')}</p>`;
-                
-                var hargaHookItem = hargaSaatIni.aksesoris.hook;
-                totalHarga += hargaHookItem;
-                detailHTML += `<p><b>Hook:</b> 1 pcs x Rp ${hargaHookItem.toLocaleString('id-ID')} = Rp ${hargaHookItem.toLocaleString('id-ID')}</p>`;
-                
-                var hargaTaliItem = hargaSaatIni.aksesoris.tali;
-                totalHarga += hargaTaliItem;
-                detailHTML += `<p><b>Tali:</b> 1 pcs x Rp ${hargaTaliItem.toLocaleString('id-ID')} = Rp ${hargaTaliItem.toLocaleString('id-ID')}</p>`;
-
-            } else if (modelGorden === "kupu") {
-                var hargaStickItem = hargaSaatIni.aksesoris.stick;
-                totalHarga += hargaStickItem;
-                detailHTML += `<p><b>Stick:</b> 1 pcs x Rp ${hargaStickItem.toLocaleString('id-ID')} = Rp ${hargaStickItem.toLocaleString('id-ID')}</p>`;
-            }
-            
-            // Jasa Jahit (otomatis dihitung untuk gorden kain, termasuk vitrase jika ada)
-            var hargaJahitItem = totalPanjangKain * hargaSaatIni.jasa.jahit;
-            totalHarga += hargaJahitItem;
-            detailHTML += `<p><b>Jasa Jahit:</b> Pemakaian total kain ${totalPanjangKain.toFixed(2)}m x Rp ${hargaSaatIni.jasa.jahit.toLocaleString('id-ID')} = Rp ${hargaJahitItem.toLocaleString('id-ID')}</p>`;
-
-            // Jasa Instalasi (jika dicentang)
-            if (document.getElementById("pakai-instalasi").checked) {
-                var hargaInstalasiItem = hargaSaatIni.jasa.instalasi;
-                totalHarga += hargaInstalasiItem;
-                detailHTML += `<p><b>Jasa Instalasi:</b> 1 x Rp ${hargaInstalasiItem.toLocaleString('id-ID')} = Rp ${hargaInstalasiItem.toLocaleString('id-ID')}</p>`;
-            }
+        if (model !== 'blinds' && kain === "") {
+             alert("Mohon lengkapi pilihan Kain.");
+            document.getElementById('rincian').style.display = 'none';
+            return;
         }
         
-        document.getElementById("detail-perhitungan").innerHTML = `<h3>Rincian Perhitungan</h3>${detailHTML}`;
-        document.getElementById("detail-perhitungan").style.display = "block";
-        document.getElementById("hasil-harga").textContent = "Total: Rp " + totalHarga.toLocaleString('id-ID');
-    }
-</script>
+        if (diskonAktif && (isNaN(diskonPersen) || diskonPersen < 0 || diskonPersen > 100)) {
+            alert("Persentase diskon tidak valid. Mohon masukkan angka antara 0 dan 100.");
+            document.getElementById('rincian').style.display = 'none';
+            return;
+        }
 
+        const rincianBody = document.getElementById('rincian-body');
+        rincianBody.innerHTML = '';
+        
+        let harga_sebelum_diskon = 0;
+
+        const currentPrices = loadPrices();
+
+        function roundUpToEven(num) {
+            return Math.ceil(num / 2) * 2;
+        }
+
+        const mainItems = [];
+        if (model === "blinds") {
+            const hargaBlind = parseFloat(document.getElementById('harga_blind').value);
+            if (isNaN(hargaBlind)) {
+                alert("Mohon masukkan harga per m² untuk Blinds.");
+                document.getElementById('rincian').style.display = 'none';
+                return;
+            }
+
+            let luas = lebar * tinggi;
+            if (luas < 1) {
+                luas = 1;
+            }
+            
+            mainItems.push({ item: "Blinds By Sharppoint", jumlah: `${luas.toFixed(2)} m²`, harga: luas * hargaBlind });
+        } else if (kain === "kain-import") {
+            const totalPemakaianKain = (lebar + 0.2) * 3;
+            mainItems.push({ item: "Kain Import", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_import });
+            mainItems.push({ item: "Jahit", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_jahit });
+            
+            if (model === "smokring") {
+                const jumlahSmokring = roundUpToEven(lebar * 24);
+                mainItems.push({ item: "Smokring", jumlah: `${jumlahSmokring} buah`, harga: jumlahSmokring * currentPrices.harga_smokring });
+                mainItems.push({ item: "Rollet", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rollet });
+                mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
+            } else if (model === "plisket") {
+                mainItems.push({ item: "Rell", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rell });
+                mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
+            } else if (model === "kupu") {
+                 mainItems.push({ item: "Stick", jumlah: `1 buah`, harga: currentPrices.harga_stick });
+             }
+         } else if (kain === "kain-lokal") {
+             const A = Math.ceil((lebar + 0.2) / 0.4);
+             const C = A * (tinggi + 0.3);
+             mainItems.push({ item: "Kain Lokal", jumlah: `${C.toFixed(2)} m`, harga: C * currentPrices.harga_lokal });
+             mainItems.push({ item: "Jahit", jumlah: `${C.toFixed(2)} m`, harga: C * currentPrices.harga_jahit });
+ 
+             if (model === "smokring") {
+                 const jumlahSmokring = roundUpToEven(lebar * 24);
+                 mainItems.push({ item: "Smokring", jumlah: `${jumlahSmokring} buah`, harga: jumlahSmokring * currentPrices.harga_smokring });
+                 mainItems.push({ item: "Rollet", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rollet });
+                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
+             } else if (model === "plisket") {
+                 mainItems.push({ item: "Rell", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rell });
+                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
+             } else if (model === "kupu") {
+                 mainItems.push({ item: "Stick", jumlah: `1 buah`, harga: currentPrices.harga_stick });
+             }
+         } else if (kain === "kain-vitrase") {
+             const totalPemakaianKain = (lebar + 0.2) * 3;
+             mainItems.push({ item: "Kain Vitrase", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_vitrase_kain });
+             mainItems.push({ item: "Jahit", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_jahit });
+ 
+             if (model === "smokring") {
+                 const jumlahSmokring = roundUpToEven(lebar * 24);
+                 mainItems.push({ item: "Smokring", jumlah: `${jumlahSmokring} buah`, harga: jumlahSmokring * currentPrices.harga_smokring });
+                 mainItems.push({ item: "Rollet", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rollet });
+                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
+             } else if (model === "plisket") {
+                 mainItems.push({ item: "Rell", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rell });
+                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
+             } else if (model === "kupu") {
+                 mainItems.push({ item: "Stick", jumlah: `1 buah`, harga: currentPrices.harga_stick });
+             }
+         }
+ 
+        mainItems.forEach(item => {
+            const row = rincianBody.insertRow();
+            row.insertCell(0).innerText = item.item;
+            row.insertCell(1).innerText = item.jumlah;
+            row.insertCell(2).innerText = formatRupiah(item.harga);
+            harga_sebelum_diskon += item.harga;
+        });
+
+         if (tambahVitras) {
+             const lebarVitras = parseFloat(document.getElementById('lebar_vitras').value);
+             const tinggiVitras = parseFloat(document.getElementById('tinggi_vitras').value);
+             const modelVitras = document.getElementById('model_vitras').value;
+ 
+             if (isNaN(lebarVitras) || isNaN(tinggiVitras) || modelVitras === "") {
+                  alert("Mohon lengkapi data Lebar, Tinggi, dan Model untuk Vitras.");
+                  document.getElementById('rincian').style.display = 'none';
+                  return;
+             }
+ 
+             const vitrasItems = [];
+             const totalPemakaianVitras = (lebarVitras + 0.2) * 3;
+             vitrasItems.push({ item: "Kain Vitras", jumlah: `${totalPemakaianVitras.toFixed(2)} m`, harga: totalPemakaianVitras * currentPrices.harga_vitrase_kain });
+             vitrasItems.push({ item: "Jahit Vitras", jumlah: `${totalPemakaianVitras.toFixed(2)} m`, harga: totalPemakaianVitras * currentPrices.harga_jahit });
+             
+             if (modelVitras === "plisket") {
+                 vitrasItems.push({ item: "Rell Vitras", jumlah: `${lebarVitras.toFixed(2)} m`, harga: Math.max(lebarVitras, 1) * currentPrices.harga_rell });
+             } else if (modelVitras === "kupu") {
+                 vitrasItems.push({ item: "Stick Vitras", jumlah: `1 buah`, harga: currentPrices.harga_stick });
+             }
+             
+             const rowHeader = rincianBody.insertRow();
+             const headerCell = rowHeader.insertCell(0);
+             headerCell.innerText = "--- Vitras Tambahan ---";
+             headerCell.colSpan = 3;
+             headerCell.className = 'vitras-header';
+
+             vitrasItems.forEach(item => {
+                const row = rincianBody.insertRow();
+                row.insertCell(0).innerText = item.item;
+                row.insertCell(1).innerText = item.jumlah;
+                row.insertCell(2).innerText = formatRupiah(item.harga);
+                harga_sebelum_diskon += item.harga;
+            });
+         }
+ 
+         if (instalasi) {
+             const instalasiItem = { item: "Instalasi", jumlah: `1`, harga: currentPrices.harga_instalasi };
+             const row = rincianBody.insertRow();
+             row.insertCell(0).innerText = instalasiItem.item;
+             row.insertCell(1).innerText = instalasiItem.jumlah;
+             row.insertCell(2).innerText = formatRupiah(instalasiItem.harga);
+             harga_sebelum_diskon += instalasiItem.harga;
+         }
+
+        let total_harga = harga_sebelum_diskon;
+        if (diskonAktif && diskonPersen > 0) {
+            const jumlah_diskon = harga_sebelum_diskon * (diskonPersen / 100);
+            total_harga = harga_sebelum_diskon - jumlah_diskon;
+            
+            const rowDiskon = rincianBody.insertRow();
+            rowDiskon.insertCell(0).innerText = `Diskon (${diskonPersen}%)`;
+            rowDiskon.insertCell(1).innerText = `-`;
+            rowDiskon.insertCell(2).innerText = formatRupiah(-jumlah_diskon);
+        }
+ 
+         document.getElementById('total-harga').innerText = formatRupiah(total_harga);
+ 
+         document.getElementById('rincian').style.display = 'block';
+     }
+</script>
 </body>
 </html>
