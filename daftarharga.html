@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Harga Gorden & Blinds - [Nama Toko Anda]</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+
+        .product-list {
+            display: grid;
+            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
+
+        .product-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Carousel Styles */
+        .carousel-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-slide {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-image {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background-color: #fff;
+        }
+
+        /* Product Info Styles */
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 10px;
+        }
+
+        .product-description {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .product-price {
+            font-size: 1.4em;
+            color: #e67e22;
+            font-weight: 700;
+        }
+
+        .price-note {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 8px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .product-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Daftar Harga Gorden & Blinds</h1>
+        
+        <div class="product-list">
+            
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-blackout">
+                        <img src="https://yeny-gorden.github.io/Calculator/images/1.jpg" alt="Gorden Blackout 1" class="carousel-image">
+                        <img src="https://yeny-gorden.github.io/Calculator/images/2.jpg" alt="Gorden Blackout 2" class="carousel-image">
+                        <img src="https://yeny-gorden.github.io/Calculator/images/" alt="Gorden Blackout 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-blackout"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Gorden Blackout Minimalis</h2>
+                    <p class="product-description">Gorden tebal yang efektif memblokir cahaya hingga 95%. Sangat cocok untuk kamar tidur atau ruangan yang membutuhkan privasi tinggi.</p>
+                    <div class="product-price">Mulai dari Rp 150.000 / Meter</div>
+                    <div class="price-note">*Harga dapat berubah tergantung bahan dan aksesoris</div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-sheer">
+                        <img src="https://via.placeholder.com/600x450/ffc107/000000?text=Sheer+1" alt="Gorden Sheer 1" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/17a2b8/ffffff?text=Sheer+2" alt="Gorden Sheer 2" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/dc3545/ffffff?text=Sheer+3" alt="Gorden Sheer 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-sheer"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Gorden Sheer (Transparan)</h2>
+                    <p class="product-description">Memberi kesan lembut dan elegan, membiarkan cahaya alami masuk ke ruangan. Sempurna untuk ruang tamu atau sebagai lapisan gorden.</p>
+                    <div class="product-price">Mulai dari Rp 85.000 / Meter</div>
+                    <div class="price-note">*Harga dapat berubah tergantung bahan dan ukuran</div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-roller">
+                        <img src="https://via.placeholder.com/600x450/000000/ffffff?text=Roller+1" alt="Roller Blinds 1" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/343a40/ffffff?text=Roller+2" alt="Roller Blinds 2" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/f8f9fa/000000?text=Roller+3" alt="Roller Blinds 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-roller"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Roller Blinds Polos</h2>
+                    <p class="product-description">Blinds modern yang praktis dan minimalis. Tersedia dalam berbagai pilihan warna dan tingkat transparansi.</p>
+                    <div class="product-price">Mulai dari Rp 200.000 / Meter Persegi</div>
+                    <div class="price-note">*Harga sudah termasuk instalasi</div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-roman">
+                        <img src="https://via.placeholder.com/600x450/800080/ffffff?text=Roman+1" alt="Roman Blinds 1" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/4b0082/ffffff?text=Roman+2" alt="Roman Blinds 2" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/a9a9a9/ffffff?text=Roman+3" alt="Roman Blinds 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-roman"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Gorden Lipat (Roman Blinds)</h2>
+                    <p class="product-description">Model gorden yang melipat rapi saat ditarik ke atas, memberikan tampilan yang unik dan stylish.</p>
+                    <div class="product-price">Mulai dari Rp 250.000 / Meter Persegi</div>
+                    <div class="price-note">*Harga belum termasuk biaya instalasi</div>
+                </div>
+            </div>
+
+            </div>
+    </div>
+
+    <script>
+        function initCarousel(carouselId) {
+            const carouselSlide = document.getElementById(`carousel-${carouselId}`);
+            const carouselImages = carouselSlide.querySelectorAll('.carousel-image');
+            const dotsContainer = document.getElementById(`dots-${carouselId}`);
+            let currentIndex = 0;
+
+            function updateDots() {
+                dotsContainer.innerHTML = '';
+                carouselImages.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.classList.add('carousel-dot');
+                    if (index === currentIndex) {
+                        dot.classList.add('active');
+                    }
+                    dot.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateCarousel();
+                        updateDots();
+                    });
+                    dotsContainer.appendChild(dot);
+                });
+            }
+
+            function updateCarousel() {
+                carouselSlide.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % carouselImages.length;
+                updateCarousel();
+                updateDots();
+            }
+
+            updateDots();
+            if (carouselImages.length > 1) {
+                setInterval(nextSlide, 3500); // Ganti gambar setiap 3.5 detik jika ada lebih dari 1 gambar
+            }
+        }
+
+        // Inisialisasi carousel untuk setiap produk yang ada
+        initCarousel('blackout');
+        initCarousel('sheer');
+        initCarousel('roller');
+        initCarousel('roman');
+    </script>
+
+</body>
+</html>
