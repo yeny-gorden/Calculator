@@ -3,628 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yeny Gorden Calculator</title>
+    <title>Daftar Harga Gorden & Blinds - [Nama Toko Anda]</title>
     <style>
         body {
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
         }
+
         .container {
-            max-width: 400px;
-            margin: 0 auto;
-            border: 1px solid #333;
-            padding: 20px;
-            background-color: #111;
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
-        .header {
+
+        h1 {
             text-align: center;
-            padding-bottom: 20px;
-            font-size: 24px;
+            color: #0056b3;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+
+        .product-list {
+            display: grid;
+            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
+
+        .product-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Carousel Styles */
+        .carousel-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-slide {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
         }
-        .header-text {
-            flex-grow: 1;
-            text-align: center;
+
+        .carousel-image {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        .settings-icon {
-            font-size: 24px;
-            cursor: pointer;
-            color: #d9534f;
-            line-height: 1;
-        }
-        .logo-image {
-            height: 48px; /* Ukuran gambar diperbesar */
-            cursor: pointer;
-        }
-        .input-group {
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background-color: #fff;
+        }
+
+        /* Product Info Styles */
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 10px;
+        }
+
+        .product-description {
+            font-size: 0.95em;
+            color: #666;
             margin-bottom: 15px;
-            flex-wrap: nowrap;
+            line-height: 1.5;
         }
-        .input-group label {
-            white-space: nowrap;
-            margin-right: 10px;
-            flex-grow: 1;
+
+        .product-price {
+            font-size: 1.4em;
+            color: #e67e22;
+            font-weight: 700;
         }
-        .input-group input, .input-group select {
-            padding: 8px;
-            border: 1px solid #555;
-            background-color: #222;
-            color: #fff;
-            width: auto;
-            flex-grow: 1;
+
+        .price-note {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 8px;
         }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .checkbox-group label {
-            flex: 1;
-        }
-        .vitras-options,
-        .blind-options {
-            display: none;
-            border: 1px dashed #555;
-            padding: 10px;
-            margin-top: 10px;
-        }
-        .blind-options .harga-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .blind-options .harga-group label {
-            margin-bottom: 5px;
-        }
-        .blind-options .harga-group input {
-            width: 100%;
-        }
-        .button {
-            width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            background-color: #d9534f;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            text-transform: uppercase;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            color: #fff;
-        }
-        table, th, td {
-            border: 1px solid #555;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        #rincian {
-            display: none;
-        }
-        .vitras-header {
-            text-align: center !important;
-            font-weight: bold;
-        }
-        #pengaturan-harga {
-            display: none;
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        #pengaturan-harga h3 {
-            margin-top: 0;
-            text-align: center;
-        }
-        #pengaturan-harga table {
-            margin-top: 0;
-            width: 100%;
-        }
-        #pengaturan-harga td {
-            border: none;
-            padding: 5px 0;
-        }
-        #pengaturan-harga td input {
-            width: 90%;
-            padding: 5px;
-        }
-        .pengaturan-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .pengaturan-buttons button {
-            width: 50%;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-        }
-        #simpan-btn {
-            background-color: #28a745;
-            color: #fff;
-        }
-        #reset-btn {
-            background-color: #dc3545;
-            color: #fff;
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .product-list {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="header-text">Yeny Gorden</div>
-        <img src="https://yeny-gorden.github.io/Calculator/logo.png" alt="Logo" class="logo-image" onclick="togglePengaturan()">
-    </div>
-    
-    <div id="pengaturan-harga">
-        <h3>Pengaturan Harga</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Harga</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Kain Import (per m)</td>
-                    <td><input type="number" id="harga_import" step="1000"></td>
-                </tr>
-                <tr>
-                    <td>Kain Lokal (per m)</td>
-                    <td><input type="number" id="harga_lokal" step="1000"></td>
-                </tr>
-                <tr>
-                    <td>Kain Vitrase (per m)</td>
-                    <td><input type="number" id="harga_vitrase_kain" step="1000"></td>
-                </tr>
-                <tr>
-                    <td>Jahit (per m)</td>
-                    <td><input type="number" id="harga_jahit" step="1000"></td>
-                </tr>
-                <tr>
-                    <td>Smokring (per buah)</td>
-                    <td><input type="number" id="harga_smokring" step="100"></td>
-                </tr>
-                <tr>
-                    <td>Rollet (per m)</td>
-                    <td><input type="number" id="harga_rollet" step="1000"></td>
-                </tr>
-                <tr>
-                    <td>Rell (per m)</td>
-                    <td><input type="number" id="harga_rell" step="1000"></td>
-                </tr>
-                <tr>
-                    <td>Hook & Tali (per set)</td>
-                    <td><input type="number" id="harga_hook_tali" step="1000"></td>
-                </tr>
-                <tr>
-                    <td>Stick (per set)</td>
-                    <td><input type="number" id="harga_stick" step="100"></td>
-                </tr>
-                <tr>
-                    <td>Instalasi (per set)</td>
-                    <td><input type="number" id="harga_instalasi" step="1000"></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="pengaturan-buttons">
-            <button id="simpan-btn">Simpan Pengaturan</button>
-            <button id="reset-btn">Reset ke Harga Default</button>
-        </div>
-    </div>
-    
-    <div class="input-group">
-        <label for="lebar">Lebar (meter)</label>
-        <input type="number" id="lebar" value="1.2" step="0.1" style="width: 50%;">
-    </div>
-
-    <div class="input-group">
-        <label for="tinggi">Tinggi (meter)</label>
-        <input type="number" id="tinggi" value="2.5" step="0.1" style="width: 50%;">
-    </div>
-
-    <div class="input-group">
-        <label for="model">Pilihan Model</label>
-        <select id="model">
-            <option value="">Pilih Model..</option>
-            <option value="smokring">SMOKRING</option>
-            <option value="plisket">PLISKET</option>
-            <option value="kupu">KUPU</option>
-            <option value="blinds">Blinds By Sharppoint</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label for="kain">Pilihan Kain</label>
-        <select id="kain">
-            <option value="">Pilih Kain..</option>
-            <option value="kain-import">KAIN IMPORT</option>
-            <option value="kain-lokal">KAIN LOKAL</option>
-            <option value="kain-vitrase">KAIN VITRASE</option>
-        </select>
-    </div>
-    
-    <div class="blind-options">
-        <div class="harga-group">
-            <label for="harga_blind">Harga Blind Manual (per m²)</label>
-            <input type="number" id="harga_blind" step="1000">
-        </div>
-    </div>
-    
-    <div class="checkbox-group" id="vitras-group">
-        <label for="tambah_vitras">Tambah Vitras</label>
-        <input type="checkbox" id="tambah_vitras">
-    </div>
-
-    <div class="vitras-options">
-        <div class="input-group">
-            <label for="model_vitras">Model Vitras</label>
-            <select id="model_vitras">
-                <option value="">Pilih Model..</option>
-                <option value="plisket">PLISKET</option>
-                <option value="kupu">KUPU</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label for="lebar_vitras">Lebar Vitras (meter)</label>
-            <input type="number" id="lebar_vitras" step="0.1" style="width: 50%;">
-        </div>
-        <div class="input-group">
-            <label for="tinggi_vitras">Tinggi Vitras (meter)</label>
-            <input type="number" id="tinggi_vitras" step="0.1" style="width: 50%;">
-        </div>
-    </div>
-
-    <div class="checkbox-group">
-        <label for="instalasi">Instalasi</label>
-        <input type="checkbox" id="instalasi">
-    </div>
-    
-    <div class="checkbox-group">
-        <label for="diskon_aktif">Diskon</label>
-        <input type="checkbox" id="diskon_aktif">
-    </div>
-    <div class="input-group" id="diskon_input_group" style="display: none;">
-        <label for="diskon_persen">Diskon (%)</label>
-        <input type="number" id="diskon_persen" value="0" min="0" max="100" step="1">
-    </div>
-
-    <button class="button" onclick="hitungHarga()">
-        Hitung
-    </button>
-
-    <div id="rincian">
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Jumlah</th>
-                    <th>Harga</th>
-                </tr>
-            </thead>
-            <tbody id="rincian-body"></tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2">Total</td>
-                    <td id="total-harga">Rp.0</td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-</div>
-
-<script>
-    const defaultPrices = {
-        harga_import: 150000,
-        harga_lokal: 60000,
-        harga_vitrase_kain: 100000,
-        harga_jahit: 15000,
-        harga_smokring: 4500,
-        harga_rollet: 65000,
-        harga_rell: 40000,
-        harga_hook_tali: 72500,
-        harga_stick: 50000,
-        harga_instalasi: 35000
-    };
-
-    function loadPrices() {
-        let prices = {};
-        for (const key in defaultPrices) {
-            const savedPrice = localStorage.getItem(key);
-            prices[key] = savedPrice ? parseFloat(savedPrice) : defaultPrices[key];
-            const inputElement = document.getElementById(key);
-            if (inputElement) {
-                inputElement.value = prices[key];
-            }
-        }
-        return prices;
-    }
-
-    function savePrices() {
-        for (const key in defaultPrices) {
-            const inputElement = document.getElementById(key);
-            if (inputElement) {
-                localStorage.setItem(key, inputElement.value);
-            }
-        }
-        alert('Pengaturan harga berhasil disimpan!');
-    }
-
-    function resetPrices() {
-        for (const key in defaultPrices) {
-            localStorage.removeItem(key);
-        }
-        loadPrices();
-        alert('Pengaturan harga telah direset ke nilai default!');
-    }
-
-    document.getElementById('simpan-btn').addEventListener('click', savePrices);
-    document.getElementById('reset-btn').addEventListener('click', resetPrices);
-    
-    function togglePengaturan() {
-        const pengaturan = document.getElementById('pengaturan-harga');
-        if (pengaturan.style.display === 'block') {
-            pengaturan.style.display = 'none';
-        } else {
-            pengaturan.style.display = 'block';
-        }
-    }
-
-    window.onload = function() {
-        loadPrices();
-    };
-
-    document.getElementById('kain').addEventListener('change', function() {
-        const kain = this.value;
-        const vitrasGroup = document.getElementById('vitras-group');
-        const tambahVitrasCheckbox = document.getElementById('tambah_vitras');
-        const vitrasOptions = document.querySelector('.vitras-options');
-
-        if (kain === "kain-vitrase") {
-            vitrasGroup.style.display = 'none';
-            tambahVitrasCheckbox.checked = false;
-            vitrasOptions.style.display = 'none';
-        } else {
-            vitrasGroup.style.display = 'flex';
-        }
-    });
-
-    document.getElementById('tambah_vitras').addEventListener('change', function() {
-        const vitrasOptions = document.querySelector('.vitras-options');
-        if (this.checked) {
-            vitrasOptions.style.display = 'block';
-        } else {
-            vitrasOptions.style.display = 'none';
-        }
-    });
-
-    document.getElementById('model').addEventListener('change', function() {
-        const model = this.value;
-        const blindOptions = document.querySelector('.blind-options');
-        const kainGroup = document.querySelector('.input-group select#kain').closest('.input-group');
-        const vitrasGroup = document.getElementById('vitras-group');
-
-        if (model === "blinds") {
-            blindOptions.style.display = 'block';
-            kainGroup.style.display = 'none';
-            vitrasGroup.style.display = 'none';
-            document.getElementById('tambah_vitras').checked = false;
-            document.querySelector('.vitras-options').style.display = 'none';
-        } else {
-            blindOptions.style.display = 'none';
-            kainGroup.style.display = 'flex';
-            vitrasGroup.style.display = 'flex';
-        }
-    });
-    
-    document.getElementById('diskon_aktif').addEventListener('change', function() {
-        const diskonInputGroup = document.getElementById('diskon_input_group');
-        if (this.checked) {
-            diskonInputGroup.style.display = 'flex';
-        } else {
-            diskonInputGroup.style.display = 'none';
-        }
-    });
-
-    function formatRupiah(number) {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(number);
-    }
-
-    function hitungHarga() {
-        const lebar = parseFloat(document.getElementById('lebar').value);
-        const tinggi = parseFloat(document.getElementById('tinggi').value);
-        const model = document.getElementById('model').value;
-        const kain = document.getElementById('kain').value;
-        const tambahVitras = document.getElementById('tambah_vitras').checked;
-        const instalasi = document.getElementById('instalasi').checked;
-        const diskonAktif = document.getElementById('diskon_aktif').checked;
-        const diskonPersen = parseFloat(document.getElementById('diskon_persen').value);
-
-        if (isNaN(lebar) || isNaN(tinggi) || model === "") {
-            alert("Mohon lengkapi semua data Lebar, Tinggi, dan Pilihan Model.");
-            document.getElementById('rincian').style.display = 'none';
-            return;
-        }
-
-        if (model !== 'blinds' && kain === "") {
-             alert("Mohon lengkapi pilihan Kain.");
-            document.getElementById('rincian').style.display = 'none';
-            return;
-        }
+    <div class="container">
+        <h1>Daftar Harga Gorden & Blinds</h1>
         
-        if (diskonAktif && (isNaN(diskonPersen) || diskonPersen < 0 || diskonPersen > 100)) {
-            alert("Persentase diskon tidak valid. Mohon masukkan angka antara 0 dan 100.");
-            document.getElementById('rincian').style.display = 'none';
-            return;
-        }
+        <div class="product-list">
+            
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-blackout">
+                        <img src="https://yeny-gorden.github.io/Calculator/images/1.jpg" alt="Gorden Blackout 1" class="carousel-image">
+                        <img src="https://yeny-gorden.github.io/Calculator/images/2.jpg" alt="Gorden Blackout 2" class="carousel-image">
+                        <img src="https://yeny-gorden.github.io/Calculator/images/" alt="Gorden Blackout 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-blackout"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Gorden Blackout Minimalis</h2>
+                    <p class="product-description">Gorden tebal yang efektif memblokir cahaya hingga 95%. Sangat cocok untuk kamar tidur atau ruangan yang membutuhkan privasi tinggi.</p>
+                    <div class="product-price">Mulai dari Rp 150.000 / Meter</div>
+                    <div class="price-note">*Harga dapat berubah tergantung bahan dan aksesoris</div>
+                </div>
+            </div>
 
-        const rincianBody = document.getElementById('rincian-body');
-        rincianBody.innerHTML = '';
-        
-        let harga_sebelum_diskon = 0;
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-sheer">
+                        <img src="https://via.placeholder.com/600x450/ffc107/000000?text=Sheer+1" alt="Gorden Sheer 1" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/17a2b8/ffffff?text=Sheer+2" alt="Gorden Sheer 2" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/dc3545/ffffff?text=Sheer+3" alt="Gorden Sheer 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-sheer"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Gorden Sheer (Transparan)</h2>
+                    <p class="product-description">Memberi kesan lembut dan elegan, membiarkan cahaya alami masuk ke ruangan. Sempurna untuk ruang tamu atau sebagai lapisan gorden.</p>
+                    <div class="product-price">Mulai dari Rp 85.000 / Meter</div>
+                    <div class="price-note">*Harga dapat berubah tergantung bahan dan ukuran</div>
+                </div>
+            </div>
 
-        const currentPrices = loadPrices();
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-roller">
+                        <img src="https://via.placeholder.com/600x450/000000/ffffff?text=Roller+1" alt="Roller Blinds 1" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/343a40/ffffff?text=Roller+2" alt="Roller Blinds 2" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/f8f9fa/000000?text=Roller+3" alt="Roller Blinds 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-roller"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Roller Blinds Polos</h2>
+                    <p class="product-description">Blinds modern yang praktis dan minimalis. Tersedia dalam berbagai pilihan warna dan tingkat transparansi.</p>
+                    <div class="product-price">Mulai dari Rp 200.000 / Meter Persegi</div>
+                    <div class="price-note">*Harga sudah termasuk instalasi</div>
+                </div>
+            </div>
 
-        function roundUpToEven(num) {
-            return Math.ceil(num / 2) * 2;
-        }
+            <div class="product-card">
+                <div class="carousel-container">
+                    <div class="carousel-slide" id="carousel-roman">
+                        <img src="https://via.placeholder.com/600x450/800080/ffffff?text=Roman+1" alt="Roman Blinds 1" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/4b0082/ffffff?text=Roman+2" alt="Roman Blinds 2" class="carousel-image">
+                        <img src="https://via.placeholder.com/600x450/a9a9a9/ffffff?text=Roman+3" alt="Roman Blinds 3" class="carousel-image">
+                    </div>
+                    <div class="carousel-dots" id="dots-roman"></div>
+                </div>
+                <div class="product-info">
+                    <h2 class="product-title">Gorden Lipat (Roman Blinds)</h2>
+                    <p class="product-description">Model gorden yang melipat rapi saat ditarik ke atas, memberikan tampilan yang unik dan stylish.</p>
+                    <div class="product-price">Mulai dari Rp 250.000 / Meter Persegi</div>
+                    <div class="price-note">*Harga belum termasuk biaya instalasi</div>
+                </div>
+            </div>
 
-        const mainItems = [];
-        if (model === "blinds") {
-            const hargaBlind = parseFloat(document.getElementById('harga_blind').value);
-            if (isNaN(hargaBlind)) {
-                alert("Mohon masukkan harga per m² untuk Blinds.");
-                document.getElementById('rincian').style.display = 'none';
-                return;
+            </div>
+    </div>
+
+    <script>
+        function initCarousel(carouselId) {
+            const carouselSlide = document.getElementById(`carousel-${carouselId}`);
+            const carouselImages = carouselSlide.querySelectorAll('.carousel-image');
+            const dotsContainer = document.getElementById(`dots-${carouselId}`);
+            let currentIndex = 0;
+
+            function updateDots() {
+                dotsContainer.innerHTML = '';
+                carouselImages.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.classList.add('carousel-dot');
+                    if (index === currentIndex) {
+                        dot.classList.add('active');
+                    }
+                    dot.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateCarousel();
+                        updateDots();
+                    });
+                    dotsContainer.appendChild(dot);
+                });
             }
 
-            let luas = lebar * tinggi;
-            if (luas < 1) {
-                luas = 1;
+            function updateCarousel() {
+                carouselSlide.style.transform = `translateX(-${currentIndex * 100}%)`;
             }
-            
-            mainItems.push({ item: "Blinds By Sharppoint", jumlah: `${luas.toFixed(2)} m²`, harga: luas * hargaBlind });
-        } else if (kain === "kain-import") {
-            const totalPemakaianKain = (lebar + 0.2) * 3;
-            mainItems.push({ item: "Kain Import", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_import });
-            mainItems.push({ item: "Jahit", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_jahit });
-            
-            if (model === "smokring") {
-                const jumlahSmokring = roundUpToEven(lebar * 24);
-                mainItems.push({ item: "Smokring", jumlah: `${jumlahSmokring} buah`, harga: jumlahSmokring * currentPrices.harga_smokring });
-                mainItems.push({ item: "Rollet", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rollet });
-                mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
-            } else if (model === "plisket") {
-                mainItems.push({ item: "Rell", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rell });
-                mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
-            } else if (model === "kupu") {
-                 mainItems.push({ item: "Stick", jumlah: `1 buah`, harga: currentPrices.harga_stick });
-             }
-         } else if (kain === "kain-lokal") {
-             const A = Math.ceil((lebar + 0.2) / 0.4);
-             const C = A * (tinggi + 0.3);
-             mainItems.push({ item: "Kain Lokal", jumlah: `${C.toFixed(2)} m`, harga: C * currentPrices.harga_lokal });
-             mainItems.push({ item: "Jahit", jumlah: `${C.toFixed(2)} m`, harga: C * currentPrices.harga_jahit });
- 
-             if (model === "smokring") {
-                 const jumlahSmokring = roundUpToEven(lebar * 24);
-                 mainItems.push({ item: "Smokring", jumlah: `${jumlahSmokring} buah`, harga: jumlahSmokring * currentPrices.harga_smokring });
-                 mainItems.push({ item: "Rollet", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rollet });
-                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
-             } else if (model === "plisket") {
-                 mainItems.push({ item: "Rell", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rell });
-                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
-             } else if (model === "kupu") {
-                 mainItems.push({ item: "Stick", jumlah: `1 buah`, harga: currentPrices.harga_stick });
-             }
-         } else if (kain === "kain-vitrase") {
-             const totalPemakaianKain = (lebar + 0.2) * 3;
-             mainItems.push({ item: "Kain Vitrase", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_vitrase_kain });
-             mainItems.push({ item: "Jahit", jumlah: `${totalPemakaianKain.toFixed(2)} m`, harga: totalPemakaianKain * currentPrices.harga_jahit });
- 
-             if (model === "smokring") {
-                 const jumlahSmokring = roundUpToEven(lebar * 24);
-                 mainItems.push({ item: "Smokring", jumlah: `${jumlahSmokring} buah`, harga: jumlahSmokring * currentPrices.harga_smokring });
-                 mainItems.push({ item: "Rollet", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rollet });
-                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
-             } else if (model === "plisket") {
-                 mainItems.push({ item: "Rell", jumlah: `${lebar.toFixed(2)} m`, harga: Math.max(lebar, 1) * currentPrices.harga_rell });
-                 mainItems.push({ item: "Hook & Tali", jumlah: `1 set`, harga: currentPrices.harga_hook_tali });
-             } else if (model === "kupu") {
-                 mainItems.push({ item: "Stick", jumlah: `1 buah`, harga: currentPrices.harga_stick });
-             }
-         }
- 
-        mainItems.forEach(item => {
-            const row = rincianBody.insertRow();
-            row.insertCell(0).innerText = item.item;
-            row.insertCell(1).innerText = item.jumlah;
-            row.insertCell(2).innerText = formatRupiah(item.harga);
-            harga_sebelum_diskon += item.harga;
-        });
 
-         if (tambahVitras) {
-             const lebarVitras = parseFloat(document.getElementById('lebar_vitras').value);
-             const tinggiVitras = parseFloat(document.getElementById('tinggi_vitras').value);
-             const modelVitras = document.getElementById('model_vitras').value;
- 
-             if (isNaN(lebarVitras) || isNaN(tinggiVitras) || modelVitras === "") {
-                  alert("Mohon lengkapi data Lebar, Tinggi, dan Model untuk Vitras.");
-                  document.getElementById('rincian').style.display = 'none';
-                  return;
-             }
- 
-             const vitrasItems = [];
-             const totalPemakaianVitras = (lebarVitras + 0.2) * 3;
-             vitrasItems.push({ item: "Kain Vitras", jumlah: `${totalPemakaianVitras.toFixed(2)} m`, harga: totalPemakaianVitras * currentPrices.harga_vitrase_kain });
-             vitrasItems.push({ item: "Jahit Vitras", jumlah: `${totalPemakaianVitras.toFixed(2)} m`, harga: totalPemakaianVitras * currentPrices.harga_jahit });
-             
-             if (modelVitras === "plisket") {
-                 vitrasItems.push({ item: "Rell Vitras", jumlah: `${lebarVitras.toFixed(2)} m`, harga: Math.max(lebarVitras, 1) * currentPrices.harga_rell });
-             } else if (modelVitras === "kupu") {
-                 vitrasItems.push({ item: "Stick Vitras", jumlah: `1 buah`, harga: currentPrices.harga_stick });
-             }
-             
-             const rowHeader = rincianBody.insertRow();
-             const headerCell = rowHeader.insertCell(0);
-             headerCell.innerText = "--- Vitras Tambahan ---";
-             headerCell.colSpan = 3;
-             headerCell.className = 'vitras-header';
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % carouselImages.length;
+                updateCarousel();
+                updateDots();
+            }
 
-             vitrasItems.forEach(item => {
-                const row = rincianBody.insertRow();
-                row.insertCell(0).innerText = item.item;
-                row.insertCell(1).innerText = item.jumlah;
-                row.insertCell(2).innerText = formatRupiah(item.harga);
-                harga_sebelum_diskon += item.harga;
-            });
-         }
- 
-         if (instalasi) {
-             const instalasiItem = { item: "Instalasi", jumlah: `1`, harga: currentPrices.harga_instalasi };
-             const row = rincianBody.insertRow();
-             row.insertCell(0).innerText = instalasiItem.item;
-             row.insertCell(1).innerText = instalasiItem.jumlah;
-             row.insertCell(2).innerText = formatRupiah(instalasiItem.harga);
-             harga_sebelum_diskon += instalasiItem.harga;
-         }
-
-        let total_harga = harga_sebelum_diskon;
-        if (diskonAktif && diskonPersen > 0) {
-            const jumlah_diskon = harga_sebelum_diskon * (diskonPersen / 100);
-            total_harga = harga_sebelum_diskon - jumlah_diskon;
-            
-            const rowDiskon = rincianBody.insertRow();
-            rowDiskon.insertCell(0).innerText = `Diskon (${diskonPersen}%)`;
-            rowDiskon.insertCell(1).innerText = `-`;
-            rowDiskon.insertCell(2).innerText = formatRupiah(-jumlah_diskon);
+            updateDots();
+            if (carouselImages.length > 1) {
+                setInterval(nextSlide, 3500); // Ganti gambar setiap 3.5 detik jika ada lebih dari 1 gambar
+            }
         }
- 
-         document.getElementById('total-harga').innerText = formatRupiah(total_harga);
- 
-         document.getElementById('rincian').style.display = 'block';
-     }
-</script>
+
+        // Inisialisasi carousel untuk setiap produk yang ada
+        initCarousel('blackout');
+        initCarousel('sheer');
+        initCarousel('roller');
+        initCarousel('roman');
+    </script>
+
 </body>
 </html>
