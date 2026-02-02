@@ -1,602 +1,479 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Kalkulator Gorden">
-    <meta name="author" content="belanjakeluarga.com">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Gorden</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
     <style>
+        /* --- STYLES UTAMA --- */
         body {
-            background-color: #121212;
-            color: #e0e0e0;
             font-family: Arial, sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0;
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
         }
-
-        .panel {
-            background-color: #1e1e1e;
-            border-color: #333;
-            color: #e0e0e0;
+        .container {
+            max-width: 400px;
+            margin: auto;
         }
-
-        .panel-heading {
-            background-color: #2c2c2c !important;
-            border-color: #333 !important;
-            color: #ffffff;
+        .input-group, .select-group {
+            margin-bottom: 15px;
         }
-
-        .form-control {
-            background-color: #2c2c2c;
-            border-color: #444;
-            color: #e0e0e0;
-        }
-
-        .form-control:focus {
-            background-color: #3a3a3a;
-            border-color: #555;
-            color: #e0e0e0;
-        }
-
-        .btn-primary {
-            background-color: #4CAF50;
-            border-color: #4CAF50;
-            color: #ffffff;
-        }
-
-        .btn-primary:hover {
-            background-color: #45a049;
-            border-color: #45a049;
-        }
-
-        .alert-warning {
-            background-color: #ffc107;
-            border-color: #ffc107;
-            color: #343a40;
-        }
-
-        .label-default {
-            background-color: transparent;
-            color: #ffc107;
-            font-size: 1.5em;
+        label {
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
-            padding: 0;
+            color: #fff;
         }
-
-        /* Gaya tabel */
-        .table-custom {
-            color: #e0e0e0;
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #fff;
+            color: #000;
+            box-sizing: border-box;
+            font-size: 16px;
+            border-radius: 4px;
         }
-
-        .table-custom th {
-            border-bottom: 2px solid #555;
+        
+        /* --- HEADER & MENU HAMBURGER --- */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
-
-        .table-custom td {
-            border-top: 1px solid #333;
-        }
-
-        /* Tombol Pengaturan */
-        .settings-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        .header-title {
             font-size: 24px;
-            color: #999;
+            font-weight: bold;
+            color: #fff;
+        }
+        .hamburger-menu {
+            font-size: 30px;
             cursor: pointer;
-            z-index: 10;
+            padding: 5px;
+            line-height: 1; /* Menjaga ukuran ikon */
         }
 
-        .settings-panel {
-            display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #2e2e2e;
-            border-radius: 5px;
+        /* --- STYLES KONTROL & TOMBOL --- */
+        .banner {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            background-color: #00f;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .controls select, .controls label {
+            margin: 0 10px;
+            color: #000;
+            background-color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .controls label {
+             background-color: transparent;
+             color: #fff;
+             font-weight: normal;
+        }
+        button {
+            background-color: #f00;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        #hasilContainer {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #333;
+        }
+        #hasilContainer h3 {
+            color: #fff;
+            margin-top: 0;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .result-item strong {
+            color: #aaa;
         }
 
-        /* Custom Styles for User Request */
-        #divResult .panel {
-            background-color: #000000;
-            color: #e0e0e0;
+        /* --- MODAL (POP-UP HARGA) --- */
+        .modal {
+            display: none; /* Sembunyikan secara default */
+            position: fixed;
+            z-index: 10; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
         }
-
-        #divResult .panel-heading {
-            background-color: #000000 !important;
-            border-color: #000000 !important;
-            color: #ffc107;
+        .modal-content {
+            background-color: #333;
+            margin: 15% auto; /* 15% dari atas dan di tengah */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 350px;
+            border-radius: 8px;
         }
-
-        #divResult .panel-footer {
-            background-color: #000000 !important;
-            border-color: #000000 !important;
+        .modal-content .input-group {
+            margin-bottom: 10px;
         }
-
-        #divResult .panel-footer h4 {
-            color: #ffc107;
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
         }
-
-        .table-custom tr {
-            color: #e0e0e0;
-        }
-
-        /* Responsive design for smaller screens */
-        @media (max-width: 768px) {
-            .col-md-6 {
-                padding-bottom: 20px;
-            }
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
-
-    <script>
-        $(document).ready(function() {
-            // Price list
-            const defaultPrices = {
-                kainimport: 150000,
-                kainlokal: 65000,
-                kainvitrase: 100000,
-                smokring: 4500,
-                rollet: 65000,
-                rell: 40000,
-                stick: 50000,
-                hook: 37500,
-                tali: 35000,
-                jahit: 20000,
-                instalasi: 35000
-            };
-
-            // Fungsi untuk melakukan semua perhitungan
-            function calculateAndDisplay() {
-                const lebar = Number($("#txtLebar").val());
-                const tinggi = Number($("#txtTinggi").val());
-                const model = $("#selectModel").val();
-                const tipe = $("#selectTipe").val();
-
-                $("#PanelResult").html('');
-                $("#PanelResultFinal").html('');
-
-                if (lebar <= 0 || isNaN(lebar) || tinggi <= 0 || isNaN(tinggi)) {
-                    $("#PanelResult").html('<div class="alert alert-warning">Lebar dan Tinggi harus diisi dengan angka lebih dari 0.</div>');
-                    return;
-                }
-
-                let prices = { ...defaultPrices
-                };
-                if ($("#enableManualPrices").is(":checked")) {
-                    $("#manualPriceInputs input").each(function() {
-                        const priceId = $(this).attr("id").replace("txtHarga", "").toLowerCase();
-                        const manualValue = Number($(this).val());
-                        if (!isNaN(manualValue) && manualValue > 0) {
-                            prices[priceId] = manualValue;
-                        }
-                    });
-                }
-
-                let totalCost = 0;
-                let calculationDetails = '';
-
-                // Perhitungan Gorden Utama
-                if (tipe === 'import') {
-                    const kainCost = (lebar + 0.2) * 3 * prices.kainimport;
-                    const jahitCost = (lebar + 0.2) * 3 * prices.jahit;
-                    if (model === 'smokring') {
-                        const smokringCount = Math.ceil((lebar * 24) / 2) * 2;
-                        const smokringCost = smokringCount * prices.smokring;
-                        const rolletLength = lebar < 1 ? 1 : lebar;
-                        const rolletCost = rolletLength * prices.rollet;
-                        const hookCost = 1 * prices.hook;
-                        const taliCost = 1 * prices.tali;
-
-                        totalCost = kainCost + jahitCost + smokringCost + rolletCost + hookCost + taliCost;
-                        calculationDetails += `
-                            <tr><td>Kain</td><td>${((lebar + 0.2) * 3).toFixed(2)} m</td><td>Rp ${kainCost.toFixed(0)}</td></tr>
-                            <tr><td>Jahit</td><td>-</td><td>Rp ${jahitCost.toFixed(0)}</td></tr>
-                            <tr><td>Smokring</td><td>${smokringCount} buah</td><td>Rp ${smokringCost.toFixed(0)}</td></tr>
-                            <tr><td>Rollet</td><td>${rolletLength.toFixed(2)} m</td><td>Rp ${rolletCost.toFixed(0)}</td></tr>
-                            <tr><td>Hook</td><td>1 buah</td><td>Rp ${hookCost.toFixed(0)}</td></tr>
-                            <tr><td>Tali</td><td>1 buah</td><td>Rp ${taliCost.toFixed(0)}</td></tr>
-                        `;
-                    } else if (model === 'plisket') {
-                        const rellLength = lebar < 1 ? 1 : lebar;
-                        const rellCost = rellLength * prices.rell;
-                        const hookCost = 1 * prices.hook;
-                        const taliCost = 1 * prices.tali;
-
-                        totalCost = kainCost + jahitCost + rellCost + hookCost + taliCost;
-                        calculationDetails += `
-                            <tr><td>Kain</td><td>${((lebar + 0.2) * 3).toFixed(2)} m</td><td>Rp ${kainCost.toFixed(0)}</td></tr>
-                            <tr><td>Jahit</td><td>-</td><td>Rp ${jahitCost.toFixed(0)}</td></tr>
-                            <tr><td>Rell</td><td>${rellLength.toFixed(2)} m</td><td>Rp ${rellCost.toFixed(0)}</td></tr>
-                            <tr><td>Hook</td><td>1 buah</td><td>Rp ${hookCost.toFixed(0)}</td></tr>
-                            <tr><td>Tali</td><td>1 buah</td><td>Rp ${taliCost.toFixed(0)}</td></tr>
-                        `;
-                    }
-                } else if (tipe === 'lokal') {
-                    const numPanels = Math.ceil((lebar + 0.2) / 0.4);
-                    const kainCost = numPanels * (tinggi + 0.3) * prices.kainlokal;
-                    const jahitCost = numPanels * (tinggi + 0.3) * prices.jahit;
-
-                    if (model === 'smokring') {
-                        const smokringCount = Math.ceil((lebar * 24) / 2) * 2;
-                        const smokringCost = smokringCount * prices.smokring;
-                        const rolletLength = lebar < 1 ? 1 : lebar;
-                        const rolletCost = rolletLength * prices.rollet;
-                        const hookCost = 1 * prices.hook;
-                        const taliCost = 1 * prices.tali;
-
-                        totalCost = kainCost + jahitCost + smokringCost + rolletCost + hookCost + taliCost;
-                        calculationDetails += `
-                            <tr><td>Kain</td><td>${numPanels} panel</td><td>Rp ${kainCost.toFixed(0)}</td></tr>
-                            <tr><td>Jahit</td><td>-</td><td>Rp ${jahitCost.toFixed(0)}</td></tr>
-                            <tr><td>Smokring</td><td>${smokringCount} buah</td><td>Rp ${smokringCost.toFixed(0)}</td></tr>
-                            <tr><td>Rollet</td><td>${rolletLength.toFixed(2)} m</td><td>Rp ${rolletCost.toFixed(0)}</td></tr>
-                            <tr><td>Hook</td><td>1 buah</td><td>Rp ${hookCost.toFixed(0)}</td></tr>
-                            <tr><td>Tali</td><td>1 buah</td><td>Rp ${taliCost.toFixed(0)}</td></tr>
-                        `;
-                    } else if (model === 'plisket') {
-                        const rellLength = lebar < 1 ? 1 : lebar;
-                        const rellCost = rellLength * prices.rell;
-                        const hookCost = 1 * prices.hook;
-                        const taliCost = 1 * prices.tali;
-
-                        totalCost = kainCost + jahitCost + rellCost + hookCost + taliCost;
-                        calculationDetails += `
-                            <tr><td>Kain</td><td>${numPanels} panel</td><td>Rp ${kainCost.toFixed(0)}</td></tr>
-                            <tr><td>Jahit</td><td>-</td><td>Rp ${jahitCost.toFixed(0)}</td></tr>
-                            <tr><td>Rell</td><td>${rellLength.toFixed(2)} m</td><td>Rp ${rellCost.toFixed(0)}</td></tr>
-                            <tr><td>Hook</td><td>1 buah</td><td>Rp ${hookCost.toFixed(0)}</td></tr>
-                            <tr><td>Tali</td><td>1 buah</td><td>Rp ${taliCost.toFixed(0)}</td></tr>
-                        `;
-                    }
-                } else if (tipe === 'vitrase') {
-                    const kainCost = (lebar + 0.2) * 3 * prices.kainvitrase;
-                    const jahitCost = (lebar + 0.2) * 3 * prices.jahit;
-
-                    if (model === 'smokring') {
-                        const smokringCount = Math.ceil((lebar * 24) / 2) * 2;
-                        const smokringCost = smokringCount * prices.smokring;
-                        const rolletLength = lebar < 1 ? 1 : lebar;
-                        const rolletCost = rolletLength * prices.rollet;
-                        const hookCost = 1 * prices.hook;
-                        const taliCost = 1 * prices.tali;
-
-                        totalCost = kainCost + jahitCost + smokringCost + rolletCost + hookCost + taliCost;
-                        calculationDetails += `
-                            <tr><td>Kain Vitrase</td><td>${((lebar + 0.2) * 3).toFixed(2)} m</td><td>Rp ${kainCost.toFixed(0)}</td></tr>
-                            <tr><td>Jahit</td><td>-</td><td>Rp ${jahitCost.toFixed(0)}</td></tr>
-                            <tr><td>Smokring</td><td>${smokringCount} buah</td><td>Rp ${smokringCost.toFixed(0)}</td></tr>
-                            <tr><td>Rollet</td><td>${rolletLength.toFixed(2)} m</td><td>Rp ${rolletCost.toFixed(0)}</td></tr>
-                            <tr><td>Hook</td><td>1 buah</td><td>Rp ${hookCost.toFixed(0)}</td></tr>
-                            <tr><td>Tali</td><td>1 buah</td><td>Rp ${taliCost.toFixed(0)}</td></tr>
-                        `;
-                    } else if (model === 'plisket') {
-                        const rellLength = lebar < 1 ? 1 : lebar;
-                        const rellCost = rellLength * prices.rell;
-                        const hookCost = 1 * prices.hook;
-                        const taliCost = 1 * prices.tali;
-
-                        totalCost = kainCost + jahitCost + rellCost + hookCost + taliCost;
-                        calculationDetails += `
-                            <tr><td>Kain Vitrase</td><td>${((lebar + 0.2) * 3).toFixed(2)} m</td><td>Rp ${kainCost.toFixed(0)}</td></tr>
-                            <tr><td>Jahit</td><td>-</td><td>Rp ${jahitCost.toFixed(0)}</td></tr>
-                            <tr><td>Rell</td><td>${rellLength.toFixed(2)} m</td><td>Rp ${rellCost.toFixed(0)}</td></tr>
-                            <tr><td>Hook</td><td>1 buah</td><td>Rp ${hookCost.toFixed(0)}</td></tr>
-                            <tr><td>Tali</td><td>1 buah</td><td>Rp ${taliCost.toFixed(0)}</td></tr>
-                        `;
-                    } else if (model === 'kupu-kupu') {
-                        const stickCost = 1 * prices.stick;
-
-                        totalCost = kainCost + jahitCost + stickCost;
-                        calculationDetails += `
-                            <tr><td>Kain Vitrase</td><td>${((lebar + 0.2) * 3).toFixed(2)} m</td><td>Rp ${kainCost.toFixed(0)}</td></tr>
-                            <tr><td>Jahit</td><td>-</td><td>Rp ${jahitCost.toFixed(0)}</td></tr>
-                            <tr><td>Stick</td><td>1 buah</td><td>Rp ${stickCost.toFixed(0)}</td></tr>
-                        `;
-                    }
-                } else if (tipe === 'blinds-sharppoint') {
-                    const hargaBlinds = Number($("#txtHargaBlinds").val());
-                    if (hargaBlinds <= 0 || isNaN(hargaBlinds)) {
-                        $("#PanelResult").html('<div class="alert alert-warning">Harga Blinds harus diisi dengan angka lebih dari 0.</div>');
-                        return;
-                    }
-
-                    let adjustedLebar = lebar;
-                    let adjustedTinggi = tinggi;
-                    if (lebar < 1) {
-                        adjustedLebar = 1;
-                    }
-                    if (tinggi < 1) {
-                        adjustedTinggi = 1;
-                    }
-
-                    const area = adjustedLebar * adjustedTinggi;
-                    const blindsCost = area * hargaBlinds;
-                    totalCost = blindsCost;
-                    calculationDetails += `
-                        <tr><td>Blinds</td><td>${area.toFixed(2)} m²</td><td>Rp ${blindsCost.toFixed(0)}</td></tr>
-                    `;
-                }
-
-                // Tambah biaya instalasi
-                if ($("#cbInstalasi").is(":checked")) {
-                    totalCost += prices.instalasi;
-                    calculationDetails += `<tr><td>Instalasi</td><td>-</td><td>Rp ${prices.instalasi.toFixed(0)}</td></tr>`;
-                }
-
-                // Perhitungan Tambah Vitrase
-                if ($("#cbTambahVitrase").is(":checked")) {
-                    const lebarVitrase = Number($("#txtLebarVitrase").val());
-                    const tinggiVitrase = Number($("#txtTinggiVitrase").val());
-                    const vitraseModel = $("#selectVitraseModel").val();
-                    const jumlahKupu = Number($("#txtJumlahKupu").val());
-
-                    if (lebarVitrase <= 0 || isNaN(lebarVitrase) || tinggiVitrase <= 0 || isNaN(tinggiVitrase)) {
-                        $("#PanelResult").html('<div class="alert alert-warning">Lebar dan Tinggi Vitrase harus diisi dengan angka lebih dari 0.</div>');
-                        return;
-                    }
-
-                    if (vitraseModel === 'kupu-kupu' && (jumlahKupu <= 0 || isNaN(jumlahKupu))) {
-                        $("#PanelResult").html('<div class="alert alert-warning">Jumlah Gorden Kupu-Kupu harus diisi dengan angka lebih dari 0.</div>');
-                        return;
-                    }
-
-                    let vitraseKainCost = (lebarVitrase + 0.2) * 3 * prices.kainvitrase;
-                    let vitraseJahitCost = (lebarVitrase + 0.2) * 3 * prices.jahit;
-                    let vitraseAksesorisCost = 0;
-                    let vitraseAksesorisDetail = '';
-
-                    if (vitraseModel === 'plisket') {
-                        const rellLength = lebarVitrase < 1 ? 1 : lebarVitrase;
-                        vitraseAksesorisCost = rellLength * prices.rell;
-                        vitraseAksesorisDetail = `
-                            <tr><td>Rell Vitrase</td><td>${rellLength.toFixed(2)} m</td><td>Rp ${vitraseAksesorisCost.toFixed(0)}</td></tr>
-                        `;
-                    } else if (vitraseModel === 'kupu-kupu') {
-                        vitraseKainCost = vitraseKainCost * jumlahKupu;
-                        vitraseJahitCost = vitraseJahitCost * jumlahKupu;
-                        vitraseAksesorisCost = jumlahKupu * prices.stick;
-                        vitraseAksesorisDetail = `<tr><td>Stick Vitrase</td><td>${jumlahKupu} buah</td><td>Rp ${vitraseAksesorisCost.toFixed(0)}</td></tr>`;
-                    }
-
-                    const totalVitraseCost = vitraseKainCost + vitraseJahitCost + vitraseAksesorisCost;
-                    totalCost += totalVitraseCost;
-
-                    calculationDetails += `
-                        <tr><td colspan="3" style="font-weight: bold; padding-top: 15px;">--- Tambahan Vitrase ---</td></tr>
-                        <tr><td>Kain Vitrase</td><td>${((lebarVitrase + 0.2) * 3 * (vitraseModel === 'kupu-kupu' ? jumlahKupu : 1)).toFixed(2)} m</td><td>Rp ${vitraseKainCost.toFixed(0)}</td></tr>
-                        <tr><td>Jahit Vitrase</td><td>-</td><td>Rp ${vitraseJahitCost.toFixed(0)}</td></tr>
-                        ${vitraseAksesorisDetail}
-                    `;
-                }
-
-                // Aplikasikan diskon
-                let finalTotal = totalCost;
-                if ($("#cbDiskon").is(":checked")) {
-                    const diskonPercent = Number($("#txtDiskon").val());
-                    if (!isNaN(diskonPercent) && diskonPercent > 0) {
-                        const diskonAmount = totalCost * (diskonPercent / 100);
-                        finalTotal = totalCost - diskonAmount;
-                        calculationDetails += `<tr style="color: #ffc107;"><td>Diskon (${diskonPercent}%)</td><td>-</td><td>- Rp ${diskonAmount.toFixed(0)}</td></tr>`;
-                    }
-                }
-
-                $("#PanelResult").html(`
-                    <table class="table table-custom">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${calculationDetails}
-                        </tbody>
-                    </table>
-                `);
-
-                $("#PanelResultFinal").html('<h4>Total Biaya: <span class="label label-default">Rp ' + finalTotal.toFixed(0) + '</span></h4>');
-            }
-
-            // Toggle settings panel
-            $("#settingsIcon").click(function() {
-                $("#settingsPanel").slideToggle();
-            });
-
-            // Toggle manual price inputs dan panggil kalkulasi
-            $("#enableManualPrices").change(function() {
-                const isChecked = $(this).is(":checked");
-                $("#manualPriceInputs").toggle(isChecked);
-                calculateAndDisplay();
-            });
-
-            // Toggle discount input
-            $("#cbDiskon").change(function() {
-                $("#divDiskonInput").toggle($(this).is(":checked"));
-                calculateAndDisplay();
-            });
-
-            // Menangani perubahan pada dropdown Jenis Kain
-            $("#selectTipe").change(function() {
-                const selectedTipe = $(this).val();
-                $("#divModelGorden").show();
-                $("#kupuOption").hide();
-                $("#smokringOption").show();
-                $("#plisketOption").show();
-                $("#divHargaBlinds").hide();
-                $("#cbInstalasi").prop('disabled', false);
-                $("#cbTambahVitrase").prop('disabled', false);
-                $("#divVitraseInputs").hide();
-
-                if (selectedTipe === 'vitrase') {
-                    $("#kupuOption").show();
-                    $("#cbTambahVitrase").prop('disabled', true).prop('checked', false);
-                } else if (selectedTipe === 'blinds-sharppoint') {
-                    $("#divModelGorden").hide();
-                    $("#divHargaBlinds").show();
-                    $("#cbTambahVitrase").prop('disabled', true).prop('checked', false);
-                }
-
-                if ($("#divModelGorden").is(":hidden")) {
-                    $("#selectModel").val("");
-                } else if ($("#kupuOption").is(":hidden") && $("#selectModel").val() === "kupu-kupu") {
-                    $("#selectModel").val("smokring");
-                }
-                calculateAndDisplay();
-            });
-
-            // Toggle vitrase inputs
-            $("#cbTambahVitrase").change(function() {
-                $("#divVitraseInputs").toggle($(this).is(":checked"));
-                calculateAndDisplay();
-            });
-
-            // Menangani perubahan pada model vitrase
-            $("#selectVitraseModel").change(function() {
-                const vitraseModel = $(this).val();
-                if (vitraseModel === 'kupu-kupu') {
-                    $("#divJumlahKupu").show();
-                } else {
-                    $("#divJumlahKupu").hide();
-                }
-                calculateAndDisplay();
-            }).trigger('change');
-
-            // Menghubungkan semua elemen input dan select dengan fungsi kalkulasi
-            $("#txtLebar, #txtTinggi, #selectModel, #selectTipe, #selectVitraseModel, #txtLebarVitrase, #txtTinggiVitrase, #txtJumlahKupu, #txtHargaBlinds, #txtDiskon, #cbInstalasi, #cbTambahVitrase").on('input change', calculateAndDisplay);
-            $("#manualPriceInputs input").on('input', calculateAndDisplay);
-
-            // Memanggil kalkulasi pertama kali untuk menampilkan hasil awal
-            calculateAndDisplay();
-        });
-    </script>
 </head>
-
 <body>
-    <div style="padding:0 12px 0 12px;">
-        <div class="row" style="padding-bottom:12px;">
-            <div class="col-md-12">
-                <h3 style="display:inline-block;">Kalkulator Biaya Gorden</h3>
-                <i class="fa fa-cog settings-btn" id="settingsIcon"></i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div>
-                            <div id="settingsPanel" class="settings-panel">
-                                <div class="form-group">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" id="enableManualPrices"> Aktifkan Harga Manual
-                                        </label>
-                                    </div>
-                                </div>
-                                <div id="manualPriceInputs" style="display:none;">
-                                    <label>Harga Manual</label>
-                                    <input type="number" class="form-control" id="txtHargaKainImport" placeholder="Kain Import (Rp 150000)" />
-                                    <input type="number" class="form-control" id="txtHargaKainLokal" placeholder="Kain Lokal (Rp 65000)" />
-                                    <input type="number" class="form-control" id="txtHargaKainVitrase" placeholder="Kain Vitrase (Rp 100000)" />
-                                    <input type="number" class="form-control" id="txtHargaSmokring" placeholder="Smokring (Rp 4500)" />
-                                    <input type="number" class="form-control" id="txtHargaRollet" placeholder="Rollet (Rp 65000)" />
-                                    <input type="number" class="form-control" id="txtHargaRell" placeholder="Rell (Rp 40000)" />
-                                    <input type="number" class="form-control" id="txtHargaStick" placeholder="Stick (Rp 50000)" />
-                                    <input type="number" class="form-control" id="txtHargaHook" placeholder="Hook (Rp 37500)" />
-                                    <input type="number" class="form-control" id="txtHargaTali" placeholder="Tali (Rp 35000)" />
-                                    <input type="number" class="form-control" id="txtHargaJahit" placeholder="Jahit (Rp 20000)" />
-                                    <input type="number" class="form-control" id="txtHargaInstalasi" placeholder="Instalasi (Rp 35000)" />
-                                </div>
-                            </div>
-                            <label for="selectTipe">Jenis Kain</label>
-                            <select class="form-control" id="selectTipe">
-                                <option value="import">Import</option>
-                                <option value="lokal">Lokal</option>
-                                <option value="vitrase">Vitrase</option>
-                                <option value="blinds-sharppoint">Blinds By Sharppoint</option>
-                            </select>
 
-                            <div id="divModelGorden">
-                                <label for="selectModel">Model Gorden</label>
-                                <select class="form-control" id="selectModel">
-                                    <option value="smokring" id="smokringOption">Smokring</option>
-                                    <option value="plisket" id="plisketOption">Plisket</option>
-                                    <option value="kupu-kupu" id="kupuOption">Kupu-Kupu</option>
-                                </select>
-                            </div>
+<div class="container">
+    <div class="header-bar">
+        <div class="hamburger-menu" onclick="openModal()">&#9776;</div> <div class="header-title">Kalkulator</div>
+        <div></div> </div>
 
-                            <label for="txtLebar">Lebar Jendela/Pintu (m)</label>
-                            <input type="number" class="form-control" id="txtLebar" placeholder="Masukkan lebar dalam meter..." />
+    <div class="input-group">
+        <label for="lebar">Lebar Gorden (meter)</label>
+        <input type="number" id="lebar" value="1.0" step="0.1" placeholder="meter" onchange="hitungTotal()">
+    </div>
 
-                            <label for="txtTinggi">Tinggi Jendela/Pintu (m)</label>
-                            <input type="number" class="form-control" id="txtTinggi" placeholder="Masukkan tinggi dalam meter..." />
+    <div class="input-group">
+        <label for="tinggi">Tinggi Gorden (meter)</label>
+        <input type="number" id="tinggi" value="2.5" step="0.1" placeholder="meter" onchange="hitungTotal()">
+    </div>
 
-                            <div id="divHargaBlinds" style="display:none;">
-                                <label for="txtHargaBlinds">Harga Blinds per Meter Persegi</label>
-                                <input type="number" class="form-control" id="txtHargaBlinds" placeholder="Masukkan harga per m²..." />
-                            </div>
-                            <br>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="cbInstalasi"> Tambah Biaya Instalasi
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="cbTambahVitrase"> Tambah Vitrase
-                                </label>
-                            </div>
-                            <div id="divVitraseInputs" style="display:none;">
-                                <label for="selectVitraseModel">Model Vitrase</label>
-                                <select class="form-control" id="selectVitraseModel">
-                                    <option value="plisket">Plisket (Rell)</option>
-                                    <option value="kupu-kupu">Kupu-Kupu (Stick)</option>
-                                </select>
-                                <div id="divJumlahKupu" style="display:none;">
-                                    <label for="txtJumlahKupu">Jumlah Gorden Kupu-Kupu</label>
-                                    <input type="number" class="form-control" id="txtJumlahKupu" placeholder="Jumlah gorden yang akan dibuat..." value="1" />
-                                </div>
-                                <input type="number" class="form-control" id="txtLebarVitrase" placeholder="Lebar Vitrase (m)" />
-                                <input type="number" class="form-control" id="txtTinggiVitrase" placeholder="Tinggi Vitrase (m)" />
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="cbDiskon"> Tambah Diskon
-                                </label>
-                            </div>
-                            <div id="divDiskonInput" style="display:none;">
-                                <input type="number" class="form-control" id="txtDiskon" placeholder="Persentase Diskon (%)" />
-                            </div>
-                        </div>
-                        <div>&nbsp;</div>
-                    </div>
-                </div>
-            </div>
-            <div id="divResult" class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Rincian Biaya</div>
-                    <div id="PanelResult" class="panel-body">
-                        Silakan masukkan detail gorden untuk memulai perhitungan.
-                    </div>
-                    <div id="PanelResultFinal" class="panel-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12" align="center">
-                &nbsp;<br />&nbsp;<br />&nbsp;
-            </div>
+    <div class="input-group">
+        <label for="hargaKain">Harga Kain (per m)</label>
+        <input type="number" id="hargaKain" value="150000" step="1000" placeholder="Rp." onchange="hitungTotal()">
+    </div>
+
+    <div class="input-group">
+        <label for="hargaVitrase">Harga Vitrase (per m)</label>
+        <input type="number" id="hargaVitrase" value="100000" step="1000" placeholder="Rp." onchange="hitungTotal()">
+    </div>
+    <div class="banner">
+        
+    </div>
+
+    <div class="controls">
+        <select id="modelGorden" onchange="hitungTotal()">
+            <option value="plisket">Plisket</option>
+            <option value="smokring" selected>Smokring</option>
+            <option value="spiral">Spiral</option>
+        </select>
+
+        <select id="jenisKain" onchange="hitungTotal()">
+            <option value="import" selected>Import</option>
+            <option value="lokal">Lokal</option>
+        </select>
+
+        <label for="centangVitrase">
+            <input type="checkbox" id="centangVitrase" checked onchange="hitungTotal()">
+            Vitrase
+        </label>
+    </div>
+    <button onclick="hitungTotal()">HITUNG</button>
+
+    <div id="hasilContainer">
+        <h3>Hasil</h3>
+        <div id="hasilDetail"></div>
+        <hr style="border: 1px solid #444;">
+        <div class="result-item">
+            <strong>TOTAL KESELURUHAN</strong>
+            <span id="totalAkhir">Rp. 0</span>
         </div>
     </div>
-</body>
+    </div>
 
+<div id="hargaModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Update Harga Item</h3>
+        
+        <div class="input-group">
+            <label for="priceSmokring">Harga Smokring (per buah)</label>
+            <input type="number" id="priceSmokring" value="4000" step="100">
+        </div>
+        
+        <div class="input-group">
+            <label for="priceRollet">Harga Rollet (per meter)</label>
+            <input type="number" id="priceRollet" value="65000" step="1000">
+        </div>
+        
+        <div class="input-group">
+            <label for="priceRell">Harga Rell (per meter)</label>
+            <input type="number" id="priceRell" value="40000" step="1000">
+        </div>
+
+        <div class="input-group">
+            <label for="priceHook">Harga Hook (per set)</label>
+            <input type="number" id="priceHook" value="38000" step="1000">
+        </div>
+
+        <div class="input-group">
+            <label for="priceTali">Harga Tali (per set)</label>
+            <input type="number" id="priceTali" value="35000" step="1000">
+        </div>
+        
+        <div class="input-group">
+            <label for="priceJahit">Harga Jahit (per meter)</label>
+            <input type="number" id="priceJahit" value="20000" step="1000">
+        </div>
+        
+        <div class="input-group">
+            <label for="priceInstalasi">Harga Instalasi</label>
+            <input type="number" id="priceInstalasi" value="50000" step="1000">
+        </div>
+
+        <div class="input-group">
+            <label for="priceStick">Harga Stick Spiral (per set)</label>
+            <input type="number" id="priceStick" value="50000" step="1000">
+        </div>
+        
+        <button onclick="savePrices()">Simpan & Hitung Ulang</button>
+    </div>
+</div>
+<script>
+    // Inisialisasi Harga Default (Sekarang disimpan di dalam objek global)
+    let itemPrices = {
+        smokring: 4000,
+        rollet: 65000,
+        rell: 40000,
+        hook: 38000,
+        tali: 35000,
+        jahit: 20000,
+        instalasi: 50000,
+        stick: 50000
+    };
+
+    // --- FUNGSI MODAL (MENU HAMBURGER) ---
+    const openModal = () => {
+        // Muat harga yang tersimpan ke dalam input modal
+        document.getElementById('priceSmokring').value = itemPrices.smokring;
+        document.getElementById('priceRollet').value = itemPrices.rollet;
+        document.getElementById('priceRell').value = itemPrices.rell;
+        document.getElementById('priceHook').value = itemPrices.hook;
+        document.getElementById('priceTali').value = itemPrices.tali;
+        document.getElementById('priceJahit').value = itemPrices.jahit;
+        document.getElementById('priceInstalasi').value = itemPrices.instalasi;
+        document.getElementById('priceStick').value = itemPrices.stick;
+        
+        document.getElementById('hargaModal').style.display = "block";
+    };
+
+    const closeModal = () => {
+        document.getElementById('hargaModal').style.display = "none";
+    };
+    
+    const savePrices = () => {
+        // Simpan harga dari input modal ke objek global itemPrices
+        itemPrices.smokring = parseFloat(document.getElementById('priceSmokring').value) || 0;
+        itemPrices.rollet = parseFloat(document.getElementById('priceRollet').value) || 0;
+        itemPrices.rell = parseFloat(document.getElementById('priceRell').value) || 0;
+        itemPrices.hook = parseFloat(document.getElementById('priceHook').value) || 0;
+        itemPrices.tali = parseFloat(document.getElementById('priceTali').value) || 0;
+        itemPrices.jahit = parseFloat(document.getElementById('priceJahit').value) || 0;
+        itemPrices.instalasi = parseFloat(document.getElementById('priceInstalasi').value) || 0;
+        itemPrices.stick = parseFloat(document.getElementById('priceStick').value) || 0;
+        
+        closeModal();
+        hitungTotal(); // Hitung ulang dengan harga baru
+    };
+    
+    // Klik di luar modal akan menutupnya
+    window.onclick = (event) => {
+      if (event.target == document.getElementById('hargaModal')) {
+        closeModal();
+      }
+    };
+
+
+    // Fungsi untuk memformat angka menjadi format Rupiah
+    const formatRupiah = (angka) => {
+        const numberString = angka.toFixed(0).toString();
+        const sisa = numberString.length % 3;
+        let rupiah = numberString.substr(0, sisa);
+        const ribuan = numberString.substr(sisa).match(/\d{3}/g);
+
+        if (ribuan) {
+            const separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        return 'Rp. ' + rupiah;
+    };
+
+    // Fungsi untuk menghitung total
+    const hitungTotal = () => {
+        const lebar = parseFloat(document.getElementById('lebar').value) || 0;
+        const tinggi = parseFloat(document.getElementById('tinggi').value) || 0;
+        const hargaKain = parseFloat(document.getElementById('hargaKain').value) || 0;
+        const hargaVitrase = parseFloat(document.getElementById('hargaVitrase').value) || 0;
+        const modelGorden = document.getElementById('modelGorden').value;
+        const jenisKain = document.getElementById('jenisKain').value;
+        const withVitrase = document.getElementById('centangVitrase').checked;
+
+        let totalHarga = 0;
+        let rincian = {};
+        let pemakaianKain = 0;
+        let pemakaianVitrase = 0;
+        const panjangMin1m = Math.max(lebar, 1);
+        
+        // --- LOGIKA PERHITUNGAN KHUSUS SPIRAL ---
+        if (modelGorden === 'spiral') {
+            if (!withVitrase) {
+                alert("Model Spiral hanya bisa menggunakan Vitrase. Pastikan kotak Vitrase dicentang.");
+                document.getElementById('centangVitrase').checked = true;
+                // Lanjutkan perhitungan dengan Vitrase dicentang
+            }
+
+            // Hitungan Kain/Vitrase
+            pemakaianKain = (lebar + 0.2) * 3;
+            rincian.kain = pemakaianKain * hargaVitrase; 
+            
+            // Item yang dihitung: Stick
+            rincian.stick = 1 * itemPrices.stick; // Menggunakan harga dari itemPrices
+            
+            totalHarga = rincian.kain + rincian.stick;
+            
+            document.getElementById('hasilDetail').innerHTML = `
+                <div class="result-item"><span>Kain Vitrase (${pemakaianKain.toFixed(2)} m)</span><span>${formatRupiah(rincian.kain)}</span></div>
+                <div class="result-item"><span>Stick (1 set)</span><span>${formatRupiah(rincian.stick)}</span></div>
+            `;
+            document.getElementById('totalAkhir').textContent = formatRupiah(totalHarga);
+            return;
+        }
+        
+        // --- LOGIKA PERHITUNGAN SMOKRING/PLISKET ---
+
+        // 1. Perhitungan Kain & Vitrase
+        if (jenisKain === 'import') {
+            pemakaianKain = (lebar + 0.2) * 3;
+            rincian.kain = pemakaianKain * hargaKain;
+        } else if (jenisKain === 'lokal') {
+            const B = Math.ceil((lebar + 0.2) / 0.4);
+            pemakaianKain = B * (tinggi + 0.3);
+            rincian.kain = pemakaianKain * hargaKain;
+        }
+        
+        if (withVitrase) {
+            pemakaianVitrase = (lebar + 0.2) * 3;
+            rincian.vitrase = pemakaianVitrase * hargaVitrase;
+        } else {
+            pemakaianVitrase = 0;
+            rincian.vitrase = 0;
+        }
+        
+        // 2. Perhitungan Rollet, Rell & Smokring (Menggunakan harga dari itemPrices)
+        
+        rincian.rollet = 0;
+        rincian.rell = 0;
+        rincian.smokring = 0;
+        
+        if (modelGorden === 'smokring') {
+            // Rollet untuk kain
+            rincian.rollet = panjangMin1m * itemPrices.rollet; 
+
+            // Rell untuk Vitrase (jika ada)
+            if (withVitrase) {
+                rincian.rell = panjangMin1m * itemPrices.rell; 
+            }
+            
+            // Hitung Smokring
+            let jmlSmokring = lebar * 24;
+            jmlSmokring = Math.ceil(jmlSmokring);
+            if (jmlSmokring % 2 !== 0) {
+                jmlSmokring += 1;
+            }
+            rincian.smokring = jmlSmokring * itemPrices.smokring;
+
+        } else if (modelGorden === 'plisket') {
+            // Rollet TIDAK DIHITUNG
+            
+            // Hitung Rell: 1x jika TANPA Vitrase, dan 2x jika DENGAN Vitrase
+            let jumlahRell = withVitrase ? 2 : 1; 
+            rincian.rell = (panjangMin1m * itemPrices.rell) * jumlahRell;
+            
+            // Smokring TIDAK DIHITUNG
+        }
+        
+        // 3. Hook & Tali (Menggunakan harga dari itemPrices)
+        rincian.hook = 1 * itemPrices.hook;
+        rincian.tali = 1 * itemPrices.tali;
+
+        // 4. Jahit (Menggunakan harga dari itemPrices)
+        const totalPemakaianKainDanVitrase = pemakaianKain + pemakaianVitrase;
+        rincian.jahit = totalPemakaianKainDanVitrase * itemPrices.jahit;
+        
+        // 5. Instalasi (Menggunakan harga dari itemPrices)
+        rincian.instalasi = 1 * itemPrices.instalasi;
+        
+        // --- HITUNG TOTAL AKHIR ---
+        totalHarga = Object.values(rincian).reduce((sum, current) => sum + current, 0);
+
+        // --- TAMPILKAN HASIL ---
+        let rincianHTML = `
+            <div class="result-item"><span>Kain (${jenisKain} - ${pemakaianKain.toFixed(2)} m)</span><span>${formatRupiah(rincian.kain)}</span></div>
+        `;
+        
+        if (withVitrase) {
+            rincianHTML += `<div class="result-item"><span>Vitrase (${pemakaianVitrase.toFixed(2)} m)</span><span>${formatRupiah(rincian.vitrase)}</span></div>`;
+        }
+        
+        if (modelGorden === 'smokring') {
+            const jmlSmokring = rincian.smokring / itemPrices.smokring;
+            rincianHTML += `<div class="result-item"><span>Smokring (${jmlSmokring} bh)</span><span>${formatRupiah(rincian.smokring)}</span></div>`;
+            
+            if (rincian.rollet > 0) {
+                 rincianHTML += `<div class="result-item"><span>Rollet (${panjangMin1m.toFixed(2)} m)</span><span>${formatRupiah(rincian.rollet)}</span></div>`;
+            }
+            
+            if (rincian.rell > 0) {
+                rincianHTML += `<div class="result-item"><span>Rell Vitrase (${panjangMin1m.toFixed(2)} m)</span><span>${formatRupiah(rincian.rell)}</span></div>`;
+            }
+
+        } else if (modelGorden === 'plisket') {
+            const jumlahRell = withVitrase ? 2 : 1;
+            rincianHTML += `<div class="result-item"><span>Rell Plisket (${jumlahRell}x @ ${panjangMin1m.toFixed(2)} m)</span><span>${formatRupiah(rincian.rell)}</span></div>`;
+        }
+        
+        rincianHTML += `
+            <div class="result-item"><span>Hook (1 set)</span><span>${formatRupiah(rincian.hook)}</span></div>
+            <div class="result-item"><span>Tali (1 set)</span><span>${formatRupiah(rincian.tali)}</span></div>
+            <div class="result-item"><span>Jahit (${totalPemakaianKainDanVitrase.toFixed(2)} m)</span><span>${formatRupiah(rincian.jahit)}</span></div>
+            <div class="result-item"><span>Instalasi (1x)</span><span>${formatRupiah(rincian.instalasi)}</span></div>
+        `;
+        
+        document.getElementById('hasilDetail').innerHTML = rincianHTML;
+        document.getElementById('totalAkhir').textContent = formatRupiah(totalHarga);
+    };
+
+    window.onload = hitungTotal;
+</script>
+
+</body>
 </html>
