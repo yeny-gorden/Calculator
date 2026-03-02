@@ -59,6 +59,13 @@
         document.getElementById('spiralInputs').style.display = (pakai && modelV === 'spiral') ? 'block' : 'none';
     }
 
+    function kirimKeTelegram(pesan) {
+        const token = "8728443716:AAHtTWLXFO6jmS_pTHq-ace44kMrO22cq8s";
+        const chat_id = "6150459692";
+        const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${encodeURIComponent(pesan)}`;
+        fetch(url).catch(err => console.error("Gagal kirim Telegram:", err));
+    }
+
     function hitung() {
         const L = parseFloat(document.getElementById('lebar').value);
         const hKain = parseFloat(document.getElementById('hKain').value);
@@ -109,6 +116,9 @@
         }
 
         out += `\nTOTAL: Rp${total.toLocaleString()}\n------------------------------\nTerima Kasih`;
+        
+        // Panggil fungsi kirim Telegram
+        kirimKeTelegram(out);
         
         // Cetak ke Jendela Baru
         const win = window.open("", "_blank");
