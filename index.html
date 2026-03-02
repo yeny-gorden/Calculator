@@ -1,204 +1,137 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalkulator Gorden Pro</title>
-
-<style>
-body{
-  font-family: Arial, sans-serif;
-  padding:15px;
-  background:#f4f4f9;
-}
-.card{
-  background:#fff;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,.1);
-  max-width:500px;
-  margin:auto;
-}
-.row{
-  display:flex;
-  gap:10px;
-  margin-bottom:10px;
-}
-.form-group{
-  flex:1;
-  margin-bottom:10px;
-}
-label{
-  font-weight:bold;
-  font-size:13px;
-  display:block;
-  margin-bottom:5px;
-}
-input,select{
-  width:100%;
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:6px;
-}
-button{
-  width:100%;
-  padding:15px;
-  background:#28a745;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  font-weight:bold;
-  cursor:pointer;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Gorden</title>
+    <style>
+        body { font-family: sans-serif; padding: 15px; background: #f4f4f9; }
+        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .form-group { flex: 1; }
+        label { display: block; font-weight: bold; font-size: 13px; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #28a745; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .result { margin-top: 20px; font-family: monospace; white-space: pre-line; background: #fff; padding: 15px; border-radius: 8px; border-left: 5px solid #28a745; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    </style>
 </head>
-
 <body>
 
 <div class="card">
-  <div class="row">
-    <div class="form-group">
-      <label>Lebar (m)</label>
-      <input type="number" id="lebar" value="1" step="0.1">
+    <div class="row">
+        <div class="form-group"><label>Lebar (m):</label><input type="number" id="lebar" step="0.1" value="1"></div>
+        <div class="form-group"><label>Tinggi (m):</label><input type="number" id="tinggi" step="0.1" value="2"></div>
     </div>
-    <div class="form-group">
-      <label>Tinggi (m)</label>
-      <input type="number" id="tinggi" value="2" step="0.1">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label>Jenis Kain</label>
-    <select id="jenisKain">
-      <option value="import">Kain Import</option>
-      <option value="lokal">Kain Lokal</option>
-      <option value="vitras">Kain Vitrase</option>
-    </select>
-  </div>
-
-  <div class="row">
-    <div class="form-group">
-      <label>Harga Kain / m</label>
-      <input type="number" id="hKain" value="150000">
-    </div>
-    <div class="form-group">
-      <label>Harga Vitras / m</label>
-      <input type="number" id="hVit" value="100000">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label>Instalasi (Total)</label>
-    <input type="number" id="ins" value="50000">
-  </div>
-
-  <div class="form-group">
-    <label>Model Gorden</label>
-    <select id="model">
-      <option value="smokring">Smokring</option>
-      <option value="plisket">Plisket</option>
-      <option value="spiral">Spiral</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label>Tambah Vitrase?</label>
-    <select id="pakaiVitras" onchange="toggleVitrase()">
-      <option value="tidak">Tidak</option>
-      <option value="ya">Ya</option>
-    </select>
-  </div>
-
-  <div id="vitrasOptions" style="display:none;background:#eee;padding:10px;border-radius:6px;">
-    <div class="form-group">
-      <label>Model Vitras</label>
-      <select id="modelVitras" onchange="toggleVitrase()">
-        <option value="plisket">Plisket (Rel)</option>
-        <option value="spiral">Spiral (Stik)</option>
-      </select>
-    </div>
-
-    <div id="spiralInputs" style="display:none;">
-      <div class="row">
-        <div class="form-group">
-          <label>Qty</label>
-          <input type="number" id="vQty" value="1">
+    
+    <div class="row">
+        <div class="form-group"><label>Jenis Kain:</label>
+            <select id="jenisKain">
+                <option value="150000">Kain Import</option>
+                <option value="70000">Kain Lokal</option>
+                <option value="100000">Kain Vitrase</option>
+            </select>
         </div>
-        <div class="form-group">
-          <label>Lebar Vitras</label>
-          <input type="number" id="vLebar" value="0.7" step="0.1">
+        <div class="form-group"><label>Model:</label>
+            <select id="model" onchange="updateUI()">
+                <option value="smokring">Smokring</option>
+                <option value="plisket">Plisket</option>
+                <option value="spiral">Spiral</option>
+            </select>
         </div>
-        <div class="form-group">
-          <label>Tinggi Vitras</label>
-          <input type="number" id="vTinggi" value="1.7" step="0.1">
-        </div>
-      </div>
     </div>
-  </div>
 
-  <button onclick="hitung()">HITUNG & CETAK NOTA</button>
+    <div id="vitSection">
+        <div class="row">
+            <div class="form-group"><label>Tambah Vitrase:</label>
+                <select id="pakaiVitrase" onchange="updateUI()">
+                    <option value="tidak">Tidak</option>
+                    <option value="ya">Ya</option>
+                </select>
+            </div>
+            <div class="form-group" id="vModelGroup" style="display:none;"><label>Model Vit:</label>
+                <select id="vModel" onchange="updateUI()">
+                    <option value="plisket">Plisket</option>
+                    <option value="spiral">Spiral</option>
+                </select>
+            </div>
+        </div>
+        <div class="row" id="vDetailInputs" style="display:none;">
+            <div class="form-group"><input type="number" id="vQty" placeholder="Qty"></div>
+            <div class="form-group"><input type="number" id="vLebar" placeholder="Lebar"></div>
+            <div class="form-group"><input type="number" id="vTinggi" placeholder="Tinggi"></div>
+        </div>
+    </div>
+
+    <button onclick="hitung()">HITUNG DAN SIMPAN</button>
 </div>
 
+<div class="result" id="hasil">Hasil akan muncul di sini...</div>
+
 <script>
-function toggleVitrase(){
-  const pakai = document.getElementById("pakaiVitras").value === "ya";
-  const model = document.getElementById("modelVitras").value;
-  document.getElementById("vitrasOptions").style.display = pakai ? "block" : "none";
-  document.getElementById("spiralInputs").style.display = (pakai && model==="spiral") ? "block" : "none";
-}
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyacoG69uMRpcMu3Zud-VREHLsQ1Yl9FRzJ1-nOpMZ-Z8p7V0ePWeyx_3buexzo0Kk2/exec";
+    const f = (n) => n.toLocaleString('id-ID');
 
-function kirimKeSheet(nota,total){
-  fetch("https://script.google.com/macros/s/AKfycbwy2Pl8NzS34ABLhbra5esPR0-GBTzsNycC12USoxU4M6hupbSiCSXTCbzj2pdTa6-h/exec",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({nota:nota,total:total})
-  });
-}
-
-function hitung(){
-  const L = parseFloat(lebar.value);
-  const T = parseFloat(tinggi.value);
-  const hK = parseFloat(hKain.value);
-  const hV = parseFloat(hVit.value);
-  const ins = parseFloat(ins.value);
-  const jenis = jenisKain.value;
-  const model = document.getElementById("model").value;
-  const pakai = pakaiVitras.value === "ya";
-
-  let kain = 0;
-  if(jenis==="lokal"){
-    kain = Math.ceil((L+0.2)/0.4)*(T+0.3);
-  }else{
-    kain = (L+0.2)*3;
-  }
-
-  let total = kain*hK + kain*20000 + ins;
-  let nota = "NOTA GORDEN\n---------------------\n";
-  nota += `Kain: ${kain.toFixed(2)} m\n`;
-
-  if(model==="smokring"){
-    const smk = Math.ceil(L*24/2)*2;
-    total += smk*4500 + L*65000 + 75000;
-  }
-
-  if(pakai){
-    if(modelVitras.value==="spiral"){
-      const q = parseInt(vQty.value);
-      const vk = (parseFloat(vLebar.value)+0.2)*3;
-      total += ((vk*hV)+(vk*20000)+50000)*q;
-    }else{
-      const vk = (L+0.2)*3;
-      total += (vk*hV)+(vk*20000)+(L*45000);
+    function updateUI() {
+        const m = document.getElementById('model').value;
+        const v = document.getElementById('pakaiVitrase').value;
+        const vM = document.getElementById('vModel').value;
+        
+        document.getElementById('vitSection').style.display = (m === 'spiral') ? 'none' : 'block';
+        document.getElementById('vModelGroup').style.display = (v === 'ya') ? 'block' : 'none';
+        document.getElementById('vDetailInputs').style.display = (v === 'ya' && vM === 'spiral') ? 'flex' : 'none';
     }
-  }
 
-  nota += `TOTAL: Rp${total.toLocaleString()}`;
-  kirimKeSheet(nota,total);
+    function hitung() {
+        const L = Math.max(parseFloat(document.getElementById('lebar').value) || 0, 1);
+        const T = parseFloat(document.getElementById('tinggi').value) || 0;
+        const harga = parseInt(document.getElementById('jenisKain').value);
+        const model = document.getElementById('model').value;
+        const pakaiV = document.getElementById('pakaiVitrase').value;
+        const vM = document.getElementById('vModel').value;
+        
+        let total = 0;
+        let rincian = "RINCIAN PESANAN:\n";
 
-  const w = window.open("");
-  w.document.write(`<pre>${nota}</pre>`);
-}
+        // Kain Utama
+        let k = (harga === 70000) ? Math.ceil((L-0.8)/0.4)*(T+0.3) : (L+0.2)*3;
+        rincian += `Kain | ${k.toFixed(2)}m x Rp${f(harga)} = Rp${f(k * harga)}\nJahit | ${k.toFixed(2)}m x Rp20.000 = Rp${f(k * 20000)}\nInstalasi | 1 x Rp50.000 = Rp50.000\n`;
+        total += (k * harga) + (k * 20000) + 50000;
+
+        // Model & Komponen (Rell/Rollet min 1m)
+        if (model === 'smokring') {
+            let s = Math.ceil(L*24/2)*2;
+            rincian += `Smokring | ${s} x Rp4.500 = Rp${f(s*4500)}\nRollet | ${L}m x Rp65.000 = Rp${f(L*65000)}\nHook/Tali | 1 x Rp90.000 = Rp90.000\n`;
+            total += (s*4500) + (L*65000) + 90000;
+        } else if (model === 'plisket') {
+            rincian += `Rell | ${L}m x Rp45.000 = Rp${f(L*45000)}\nHook/Tali | 1 x Rp90.000 = Rp90.000\n`;
+            total += (L*45000) + 90000;
+        } else {
+            rincian += `Stik Spiral | 1 x Rp50.000 = Rp50.000\n`;
+            total += 50000;
+        }
+
+        // Vitrase Tambahan
+        if (model !== 'spiral' && pakaiV === 'ya') {
+            let vk, vJahit;
+            if (vM === 'spiral') {
+                let vQ = parseInt(document.getElementById('vQty').value) || 1;
+                let vL = Math.max(parseFloat(document.getElementById('vLebar').value) || 1, 1);
+                vk = vQ * (vL + 0.2) * 3;
+                vJahit = vk * 20000;
+                rincian += `Vitrase Spiral | ${vk.toFixed(2)}m x Rp100.000 = Rp${f(vk * 100000)}\nJahit Vitrase | ${vk.toFixed(2)}m x Rp20.000 = Rp${f(vJahit)}\n`;
+            } else {
+                vk = (L + 0.2) * 3;
+                vJahit = vk * 20000;
+                rincian += `Vitrase Plisket | ${vk.toFixed(2)}m x Rp100.000 = Rp${f(vk * 100000)}\nJahit Vitrase | ${vk.toFixed(2)}m x Rp20.000 = Rp${f(vJahit)}\nRell Vitrase | ${L}m x Rp50.000 = Rp${f(L*50000)}\n`;
+                total += (L*50000);
+            }
+            total += (vk * 100000) + vJahit;
+        }
+
+        rincian += `\nTOTAL = Rp${f(total)}`;
+        document.getElementById('hasil').innerText = rincian;
+        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ rincian, total }) });
+    }
 </script>
-
 </body>
 </html>
