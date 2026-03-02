@@ -21,6 +21,14 @@
         <div class="form-group"><label>Lebar (m):</label><input type="number" id="lebar" value="1" step="0.1"></div>
         <div class="form-group"><label>Tinggi (m):</label><input type="number" id="tinggi" value="2" step="0.1"></div>
     </div>
+    <div class="form-group">
+        <label>Jenis Kain:</label>
+        <select id="jenisKain">
+            <option value="import">Kain Import</option>
+            <option value="lokal">Kain Lokal</option>
+            <option value="vitras">Kain Vitrase</option>
+        </select>
+    </div>
     <div class="row">
         <div class="form-group"><label>Harga Kain (m):</label><input type="number" id="hKain" value="150000"></div>
         <div class="form-group"><label>Harga Vitras (m):</label><input type="number" id="hVit" value="100000"></div>
@@ -63,26 +71,37 @@
         const token = "8728443716:AAHtTWLXFO6jmS_pTHq-ace44kMrO22cq8s";
         const chat_id = "6150459692";
         const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${encodeURIComponent(pesan)}`;
-        fetch(url).catch(err => console.error("Gagal kirim Telegram:", err));
+        fetch(url).catch(err => console.error("Gagal kirim:", err));
     }
 
     function hitung() {
         const L = parseFloat(document.getElementById('lebar').value);
+        const T = parseFloat(document.getElementById('tinggi').value);
         const hKain = parseFloat(document.getElementById('hKain').value);
         const hVit = parseFloat(document.getElementById('hVit').value);
         const ins = parseFloat(document.getElementById('ins').value);
         const model = document.getElementById('model').value;
+        const jenisKain = document.getElementById('jenisKain').value;
         const pakai = document.getElementById('pakaiVitras').value === 'ya';
         
         let total = 0;
+        let kainMain = 0;
         let out = "NOTA GORDEN\n------------------------------\n";
         
-        // Gorden Utama
-        let kainMain = (L + 0.2) * 3;
+        // Logika Gorden Utama
+        if (jenisKain === 'lokal') {
+            let A = (L + 0.2) / 0.4;
+            let B = Math.ceil(A);
+            kainMain = B * (T + 0.3);
+        } else {
+            // Import dan Vitras (Default)
+            kainMain = (L + 0.2) * 3;
+        }
+
         total += (kainMain * hKain) + (kainMain * 20000) + ins;
-        out += `Kain: ${kainMain.toFixed(2)}m * 1 * ${hKain.toLocaleString()} = Rp${(kainMain*hKain).toLocaleString()}\n`;
-        out += `Jahit: ${kainMain.toFixed(2)}m * 1 * 20rb = Rp${(kainMain*20000).toLocaleString()}\n`;
-        out += `Instalasi: 1 * 1 * ${ins.toLocaleString()} = Rp${ins.toLocaleString()}\n`;
+        out += `Kain ${jenisKain.toUpperCase()}: ${kainMain.toFixed(2)}m * ${hKain.toLocaleString()} = Rp${(kainMain*hKain).toLocaleString()}\n`;
+        out += `Jahit: ${kainMain.toFixed(2)}m * 20rb = Rp${(kainMain*20000).toLocaleString()}\n`;
+        out += `Instalasi: Rp${ins.toLocaleString()}\n`;
 
         if(model === 'smokring') {
             let smkCount = Math.ceil(L*24/2)*2;
@@ -99,28 +118,26 @@
                 const lV = parseFloat(document.getElementById('vLebar').value);
                 let vKain = (lV + 0.2) * 3;
                 let subV = ((vKain * hVit) + (vKain * 20000) + 50000) * q;
-                total += subV + 50000;
-                out += `\nVITRAS SPIRAL:\nKain: ${vKain.toFixed(2)}m * ${q} * ${hVit.toLocaleString()} = Rp${(vKain*q*hVit).toLocaleString()}\n`;
+                total += subV;
+                out += `\nVITRAS SPIRAL (Qty ${q}):\n`;
+                out += `Kain: ${vKain.toFixed(2)}m * ${q} * ${hVit.toLocaleString()} = Rp${(vKain*q*hVit).toLocaleString()}\n`;
                 out += `Jahit: ${vKain.toFixed(2)}m * ${q} * 20rb = Rp${(vKain*q*20000).toLocaleString()}\n`;
                 out += `Stik: 1 * ${q} * 50rb = Rp${(q*50000).toLocaleString()}\n`;
-                out += `Instalasi Vitras: 1 * 1 * 50rb = Rp50.000\n`;
             } else {
                 let vKain = (L + 0.2) * 3;
-                let subV = (vKain * hVit) + (vKain * 20000) + (L * 45000) + 50000;
+                let subV = (vKain * hVit) + (vKain * 20000) + (L * 45000);
                 total += subV;
-                out += `\nVITRAS PLISKET:\nKain: ${vKain.toFixed(2)}m * 1 * ${hVit.toLocaleString()} = Rp${(vKain*hVit).toLocaleString()}\n`;
+                out += `\nVITRAS PLISKET:\n`;
+                out += `Kain: ${vKain.toFixed(2)}m * 1 * ${hVit.toLocaleString()} = Rp${(vKain*hVit).toLocaleString()}\n`;
                 out += `Jahit: ${vKain.toFixed(2)}m * 1 * 20rb = Rp${(vKain*20000).toLocaleString()}\n`;
                 out += `Rell: 1 * 1 * ${(L*45000).toLocaleString()} = Rp${(L*45000).toLocaleString()}\n`;
-                out += `Instalasi: 1 * 1 * 50rb = Rp50.000\n`;
             }
         }
 
         out += `\nTOTAL: Rp${total.toLocaleString()}\n------------------------------\nTerima Kasih`;
         
-        // Panggil fungsi kirim Telegram
         kirimKeTelegram(out);
         
-        // Cetak ke Jendela Baru
         const win = window.open("", "_blank");
         win.document.write(`<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Nota Gorden</title><style>body{font-family:'Courier New',monospace; padding:10px;} pre{white-space:pre-wrap;}</style></head><body><pre>${out}</pre></body></html>`);
     }
