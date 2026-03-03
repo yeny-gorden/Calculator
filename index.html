@@ -3,135 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Gorden</title>
+    <title>Kalkulator Estimasi Gorden</title>
     <style>
-        body { font-family: sans-serif; padding: 15px; background: #f4f4f9; }
-        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        .row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .form-group { flex: 1; }
-        label { display: block; font-weight: bold; font-size: 13px; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #28a745; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .result { margin-top: 20px; font-family: monospace; white-space: pre-line; background: #fff; padding: 15px; border-radius: 8px; border-left: 5px solid #28a745; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 500px; margin: auto; background-color: #f9f9f9; }
+        .window-row { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: white; }
+        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        .btn-add { background: #6c757d; color: white; }
+        .btn-send { background: #25d366; color: white; font-size: 16px; }
+        .footer-note { font-size: 12px; opacity: 0.8; display: block; margin-top: 5px; }
     </style>
 </head>
 <body>
-
-<div class="card">
-    <div class="row">
-        <div class="form-group"><label>Lebar (m):</label><input type="number" id="lebar" step="0.1" value="1"></div>
-        <div class="form-group"><label>Tinggi (m):</label><input type="number" id="tinggi" step="0.1" value="2"></div>
+    <h2>Estimasi Biaya Gorden</h2>
+    <p>Silakan masukkan nomor WA dan ukuran jendela Anda:</p>
+    
+    <input type="text" id="wa" placeholder="Nomor WhatsApp (Contoh: 0812xxx)" required>
+    
+    <div id="windowsContainer">
+        <div class="window-row">
+            <input type="number" class="lebar" placeholder="Lebar Jendela (m)" step="0.1" required>
+            <input type="number" class="tinggi" placeholder="Tinggi Jendela (m)" step="0.1" required>
+        </div>
     </div>
     
-    <div class="row">
-        <div class="form-group"><label>Jenis Kain:</label>
-            <select id="jenisKain">
-                <option value="150000">Kain Import</option>
-                <option value="70000">Kain Lokal</option>
-                <option value="100000">Kain Vitrase</option>
-            </select>
-        </div>
-        <div class="form-group"><label>Model:</label>
-            <select id="model" onchange="updateUI()">
-                <option value="smokring">Smokring</option>
-                <option value="plisket">Plisket</option>
-                <option value="spiral">Spiral</option>
-            </select>
-        </div>
-    </div>
+    <button class="btn-add" onclick="tambahJendela()">+ Tambah Jendela Lain</button>
+    <button class="btn-send" onclick="kirimData()">
+        Kirim & Dapatkan Estimasi via WhatsApp
+        <span class="footer-note">(Hasil akan dikirim dalam 1x24 jam)</span>
+    </button>
 
-    <div id="vitSection">
-        <div class="row">
-            <div class="form-group"><label>Tambah Vitrase:</label>
-                <select id="pakaiVitrase" onchange="updateUI()">
-                    <option value="tidak">Tidak</option>
-                    <option value="ya">Ya</option>
-                </select>
-            </div>
-            <div class="form-group" id="vModelGroup" style="display:none;"><label>Model Vit:</label>
-                <select id="vModel" onchange="updateUI()">
-                    <option value="plisket">Plisket</option>
-                    <option value="spiral">Spiral</option>
-                </select>
-            </div>
-        </div>
-        <div class="row" id="vDetailInputs" style="display:none;">
-            <div class="form-group"><input type="number" id="vQty" placeholder="Qty"></div>
-            <div class="form-group"><input type="number" id="vLebar" placeholder="Lebar"></div>
-            <div class="form-group"><input type="number" id="vTinggi" placeholder="Tinggi"></div>
-        </div>
-    </div>
-
-    <button onclick="hitung()">HITUNG DAN SIMPAN</button>
-</div>
-
-<div class="result" id="hasil">Hasil akan muncul di sini...</div>
-
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyacoG69uMRpcMu3Zud-VREHLsQ1Yl9FRzJ1-nOpMZ-Z8p7V0ePWeyx_3buexzo0Kk2/exec";
-    const f = (n) => n.toLocaleString('id-ID');
-
-    function updateUI() {
-        const m = document.getElementById('model').value;
-        const v = document.getElementById('pakaiVitrase').value;
-        const vM = document.getElementById('vModel').value;
-        
-        document.getElementById('vitSection').style.display = (m === 'spiral') ? 'none' : 'block';
-        document.getElementById('vModelGroup').style.display = (v === 'ya') ? 'block' : 'none';
-        document.getElementById('vDetailInputs').style.display = (v === 'ya' && vM === 'spiral') ? 'flex' : 'none';
-    }
-
-    function hitung() {
-        const L = Math.max(parseFloat(document.getElementById('lebar').value) || 0, 1);
-        const T = parseFloat(document.getElementById('tinggi').value) || 0;
-        const harga = parseInt(document.getElementById('jenisKain').value);
-        const model = document.getElementById('model').value;
-        const pakaiV = document.getElementById('pakaiVitrase').value;
-        const vM = document.getElementById('vModel').value;
-        
-        let total = 0;
-        let rincian = "RINCIAN PESANAN:\n";
-
-        // Kain Utama
-        let k = (harga === 70000) ? Math.ceil((L-0.8)/0.4)*(T+0.3) : (L+0.2)*3;
-        rincian += `Kain | ${k.toFixed(2)}m x Rp${f(harga)} = Rp${f(k * harga)}\nJahit | ${k.toFixed(2)}m x Rp20.000 = Rp${f(k * 20000)}\nInstalasi | 1 x Rp50.000 = Rp50.000\n`;
-        total += (k * harga) + (k * 20000) + 50000;
-
-        // Model & Komponen (Rell/Rollet min 1m)
-        if (model === 'smokring') {
-            let s = Math.ceil(L*24/2)*2;
-            rincian += `Smokring | ${s} x Rp4.500 = Rp${f(s*4500)}\nRollet | ${L}m x Rp65.000 = Rp${f(L*65000)}\nHook/Tali | 1 x Rp90.000 = Rp90.000\n`;
-            total += (s*4500) + (L*65000) + 90000;
-        } else if (model === 'plisket') {
-            rincian += `Rell | ${L}m x Rp45.000 = Rp${f(L*45000)}\nHook/Tali | 1 x Rp90.000 = Rp90.000\n`;
-            total += (L*45000) + 90000;
-        } else {
-            rincian += `Stik Spiral | 1 x Rp50.000 = Rp50.000\n`;
-            total += 50000;
+    <script>
+        function tambahJendela() {
+            const container = document.getElementById('windowsContainer');
+            const div = document.createElement('div');
+            div.className = 'window-row';
+            div.innerHTML = '<input type="number" class="lebar" placeholder="Lebar Jendela (m)" step="0.1"><input type="number" class="tinggi" placeholder="Tinggi Jendela (m)" step="0.1">';
+            container.appendChild(div);
         }
 
-        // Vitrase Tambahan
-        if (model !== 'spiral' && pakaiV === 'ya') {
-            let vk, vJahit;
-            if (vM === 'spiral') {
-                let vQ = parseInt(document.getElementById('vQty').value) || 1;
-                let vL = Math.max(parseFloat(document.getElementById('vLebar').value) || 1, 1);
-                vk = vQ * (vL + 0.2) * 3;
-                vJahit = vk * 20000;
-                rincian += `Vitrase Spiral | ${vk.toFixed(2)}m x Rp100.000 = Rp${f(vk * 100000)}\nJahit Vitrase | ${vk.toFixed(2)}m x Rp20.000 = Rp${f(vJahit)}\n`;
-            } else {
-                vk = (L + 0.2) * 3;
-                vJahit = vk * 20000;
-                rincian += `Vitrase Plisket | ${vk.toFixed(2)}m x Rp100.000 = Rp${f(vk * 100000)}\nJahit Vitrase | ${vk.toFixed(2)}m x Rp20.000 = Rp${f(vJahit)}\nRell Vitrase | ${L}m x Rp50.000 = Rp${f(L*50000)}\n`;
-                total += (L*50000);
+        async function kirimData() {
+            const wa = document.getElementById('wa').value;
+            const rows = document.querySelectorAll('.window-row');
+            let windows = [];
+            
+            rows.forEach(row => {
+                const l = row.querySelector('.lebar').value;
+                const t = row.querySelector('.tinggi').value;
+                if(l && t) windows.push({ lebar: l, tinggi: t });
+            });
+
+            if(!wa || windows.length === 0) return alert("Harap isi No WA dan minimal satu ukuran jendela.");
+
+            // GANTI URL DI BAWAH DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+            const url = "https://script.google.com/macros/s/AKfycbyGNos4Y8B-SWxG2T5z_vl9v3-z8MPoRI-A7A5PywRW660ZcKSmCAOXTuQrPKfzEThP/exec";
+
+            try {
+                // Memberikan feedback visual saat proses kirim
+                alert('Mengirim data...');
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ wa, windows })
+                });
+                alert('Terima kasih! Data telah terkirim. Mohon tunggu estimasi kami dalam 1x24 jam.');
+            } catch(e) {
+                alert('Terjadi kesalahan, silakan coba lagi nanti.');
             }
-            total += (vk * 100000) + vJahit;
         }
-
-        rincian += `\nTOTAL = Rp${f(total)}`;
-        document.getElementById('hasil').innerText = rincian;
-        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ rincian, total }) });
-    }
-</script>
+    </script>
 </body>
 </html>
