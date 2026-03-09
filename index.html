@@ -10,8 +10,12 @@
         input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
         .btn-add { background: #6c757d; color: white; }
-        .btn-send { background: #25d366; color: white; font-size: 16px; }
-        .footer-note { font-size: 12px; opacity: 0.8; display: block; margin-top: 5px; }
+        
+        /* Tombol Biru */
+        .btn-send { background: #007bff; color: white; font-size: 16px; }
+        
+        /* Teks footer lebih besar dan jelas */
+        .footer-note { font-size: 14px; font-weight: bold; display: block; margin-top: 5px; opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -30,7 +34,7 @@
     <button class="btn-add" onclick="tambahJendela()">+ Tambah Jendela Lain</button>
     <button class="btn-send" onclick="kirimData()">
         Kirim & Dapatkan Estimasi via WhatsApp
-        <span class="footer-note">(Hasil akan dikirim dalam 1x24 jam)</span>
+        <span class="footer-note">Admin kami akan segera menghubungi Anda</span>
     </button>
 
     <script>
@@ -55,18 +59,16 @@
 
             if(!wa || windows.length === 0) return alert("Harap isi No WA dan minimal satu ukuran jendela.");
 
-            // GANTI URL DI BAWAH DENGAN URL WEB APP GOOGLE SCRIPT ANDA
             const url = "https://script.google.com/macros/s/AKfycbyGNos4Y8B-SWxG2T5z_vl9v3-z8MPoRI-A7A5PywRW660ZcKSmCAOXTuQrPKfzEThP/exec";
 
             try {
-                // Memberikan feedback visual saat proses kirim
                 alert('Mengirim data...');
                 await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify({ wa, windows })
                 });
-                alert('Terima kasih! Data telah terkirim. Mohon tunggu estimasi kami dalam 1x24 jam.');
+                alert('Terima kasih! Data telah terkirim. Admin kami akan segera menghubungi Anda.');
             } catch(e) {
                 alert('Terjadi kesalahan, silakan coba lagi nanti.');
             }
