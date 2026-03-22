@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Gorden Pro v6.8</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#bb86fc">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <style>
+        :root {
+            --bg: #121212; --card: #1e1e1e; --accent: #bb86fc; --text: #e0e0e0;
+            --border: #333; --input: #2d2d2d; --success: #03dac6; --danger: #cf6679;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; padding-bottom: 50px; }
+        .container { max-width: 600px; margin: auto; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; position: relative; }
+        h3 { margin: 0 0 15px 0; color: var(--accent); font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        
+        .input-logo { display: block; max-width: 60px; height: auto; margin: 0 auto 15px auto; border-radius: 8px; }
+        .row { display: flex; gap: 8px; margin-bottom: 12px; }
+        .col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        
+        label { font-size: 0.7rem; color: #ffffff; margin-bottom: 4px; text-transform: uppercase; }
+        input, select { background: var(--input); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
+        input[type="number"] { text-align: center; }
+        
+        .btn { background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 5px; }
+        .btn-view { background: #333; color: var(--accent); border: 1px solid var(--accent); padding: 6px; font-size: 0.7rem; border-radius: 5px; cursor: pointer; margin-top: 5px; width: 100%; }
+        .btn-del { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 0.7rem; text-decoration: underline; margin-bottom: 5px; }
+        .btn-print { background: #444; color: white; margin-top: 10px; width: 100%; padding: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: #1a1a1a; margin-bottom: 10px; }
+        th, td { padding: 10px 8px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+        
+        .total-box { background: #252525; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 4px solid var(--success); display: flex; justify-content: space-between; align-items: center; }
+        .group-header { background: #2a2a2a; font-weight: bold; color: var(--accent); padding: 8px; border: 1px solid var(--border); margin-top: 15px; }
+
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .modal-cont { background: var(--card); margin: 10% auto; padding: 20px; border: 1px solid var(--accent); width: 85%; max-width: 450px; border-radius: 12px; }
+
+        #boxExtraVit { display: none; margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 10px; }
+        
+        /* HEADER CETAK */
+        .print-header { display: none; align-items: flex-start; gap: 20px; border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 15px; }
+        .print-logo { max-width: 110px; height: auto; border-radius: 4px; }
+        .info-pelanggan { font-size: 0.9rem; flex: 1; line-height: 1.4; }
+
+        @media print {
+            body { background: white !important; color: black !important; padding: 0; }
+            .container { max-width: 100%; width: 100%; }
+            .card { background: white !important; border: none !important; padding: 0; margin: 0; }
+            #input-section, .btn, .btn-del, .btn-view, .btn-print, .modal { display: none !important; }
+            .print-header { display: flex !important; }
+            table, th, td { border: 1px solid black !important; color: black !important; background: white !important; }
+            th { background: #eee !important; }
+            .total-box { border: 2px solid black; background: white; color: black; }
+            .group-header { background: #ddd !important; color: black !important; border: 1px solid black; padding: 5px; }
+            input { border: none !important; font-weight: bold; color: black !important; background: transparent !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h3>Data Konsumen</h3>
+        <div class="row">
+            <div class="col"><label>Nama Lengkap *</label><input type="text" id="custNama" placeholder="Nama"></div>
+            <div class="col"><label>No. Telp *</label><input type="number" id="custTelp" placeholder="08xx"></div>
+        </div>
+        <div class="row">
+            <div class="col"><label>Alamat *</label><input type="text" id="custAlamat" placeholder="Alamat Lengkap"></div>
+        </div>
+    </div>
+
+    <div id="input-section" class="card">
+        <img src="logo.png" alt="Logo" class="input-logo">
+        <h3>Input Pesanan</h3>
+        <div class="row">
+            <div class="col"><label>Kategori</label><select id="kategori" onchange="toggleKategori()"><option value="gorden">GORDEN</option><option value="blinds">BLINDS</option></select></div>
+            <div class="col"><label>Bahan</label><select id="jenis"><option value="impor">Impor (2.8/3)</option><option value="lokal">Lokal (1.2/1.4)</option></select></div>
+        </div>
+        <div class="row">
+            <div class="col"><label>L (m)</label><input type="number" id="L" step="0.1" placeholder="0.7"></div>
+            <div class="col"><label>T (m)</label><input type="number" id="T" step="0.1" placeholder="2.0"></div>
+            <div class="col gorden-only"><label>Panel</label><input type="number" id="pnl" value="1"></div>
+        </div>
+        <div class="row">
+            <div class="col"><label id="lblBarang">Nama Kain</label><input type="text" id="nKain" placeholder="Nama Kain"></div>
+            <div class="col"><label id="lblHarga">Harga /m</label><input type="number" id="hKain" placeholder="150000"></div>
+        </div>
+        
+        <div class="gorden-only">
+            <div class="row">
+                <div class="col"><label>Nama Vitrase</label><input type="text" id="nVit" placeholder="Vitras Putih"></div>
+                <div class="col"><label>Harga Vitras</label><input type="number" id="hVit" placeholder="100000"></div>
+            </div>
+            <div class="row">
+                <div class="col"><label>Model</label><select id="model"><option value="smokring">Smokring</option><option value="plisket">Plisket</option></select></div>
+                <div class="col"><label>Vitrase?</label><select id="optVit" onchange="toggleVit()"><option value="no">Tidak</option><option value="yes">Pakai</option></select></div>
+                <div class="col"><label id="lblMV" style="display:none">Model Vitras</label><select id="modelVit" style="display:none" onchange="toggleSpiral()"><option value="plisket">Plisket</option><option value="spiral">Spiral</option></select></div>
+            </div>
+        </div>
+
+        <div id="boxExtraVit">
+            <div class="row">
+                <div class="col"><label>L Spiral</label><input type="number" id="Lv" step="0.1" placeholder="0.5"></div>
+                <div class="col"><label>T Spiral</label><input type="number" id="Tv" step="0.1" placeholder="1.6"></div>
+                <div class="col"><label>Qty Spiral</label><input type="number" id="qtyV" value="2"></div>
+            </div>
+        </div>
+
+        <div class="check-row" style="display:flex;align-items:center;gap:8px;margin:10px 0">
+            <input type="checkbox" id="chkPasang" checked style="width:auto"> 
+            <label for="chkPasang" style="font-size:0.85rem;text-transform:none">Biaya Pasang (Rp 50.000)</label>
+        </div>
+
+        <button class="btn" onclick="hitung()">TAMBAH KE DAFTAR</button>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+<div id="myModal" class="modal">
+    <div class="modal-cont">
+        <h3 style="color:var(--accent)">Rincian Biaya</h3>
+        <div id="modalBody"></div>
+        <button class="btn" onclick="document.getElementById('myModal').style.display='none'">TUTUP</button>
+    </div>
+</div>
+
+<script>
+    let db = [];
+    const B = { smokring: 4500, rollet: 65000, rell: 50000, stick: 50000, hook: 40000, tali: 38000, jahit: 20000, pasang: 50000 };
+
+    function toggleKategori() {
+        const isB = document.getElementById('kategori').value === 'blinds';
+        document.querySelectorAll('.gorden-only').forEach(el => el.style.display = isB ? 'none' : 'block');
+        document.getElementById('lblBarang').innerText = isB ? "Nama Blinds" : "Nama Kain";
+        document.getElementById('lblHarga').innerText = isB ? "Harga /m2" : "Harga /m";
+    }
+
+    function toggleVit() {
+        const s = document.getElementById('optVit').value === 'yes';
+        document.getElementById('modelVit').style.display = s ? 'block' : 'none';
+        document.getElementById('lblMV').style.display = s ? 'block' : 'none';
+        toggleSpiral();
+    }
+
+    function toggleSpiral() {
+        const isSpiral = document.getElementById('modelVit').value === 'spiral' && document.getElementById('optVit').value === 'yes';
+        document.getElementById('boxExtraVit').style.display = isSpiral ? 'block' : 'none';
+    }
+
+    function hitung() {
+        const cNama = document.getElementById('custNama').value;
+        const cTelp = document.getElementById('custTelp').value;
+        const cAlamat = document.getElementById('custAlamat').value;
+
+        if(!cNama || !cTelp || !cAlamat) { alert("Harap isi Data Konsumen!"); window.scrollTo(0, 0); return; }
+
+        const kat = document.getElementById('kategori').value;
+        const L = parseFloat(document.getElementById('L').value) || 0;
+        const T = parseFloat(document.getElementById('T').value) || 0;
+        const hK = parseFloat(document.getElementById('hKain').value) || 0;
+        const nK = document.getElementById('nKain').value || "Kain";
+        const pasang = document.getElementById('chkPasang').checked;
+        const panel = parseInt(document.getElementById('pnl').value) || 1;
+        
+        let detailArr = []; 
+        let dataItem = { kat, L, T, nK, total: 0, detailHTML: "", panel, namaKustom: "", nV: "", modV: "", optV: false, Lv: 0, Tv: 0, qtyV: 0, mod: "" };
+
+        if (kat === 'blinds') {
+            let Lc = L < 1 ? 1 : L; let Tc = T < 1 ? 1 : T;
+            let qtyB = Lc * Tc;
+            detailArr.push({n: nK, q: qtyB.toFixed(2) + " m2", s: hK, t: qtyB * hK});
+            if(pasang) detailArr.push({n: "Pasang", q: "1 set", s: B.pasang, t: B.pasang});
+        } else {
+            const jenis = document.getElementById('jenis').value;
+            const mod = document.getElementById('model').value;
+            const hV = parseFloat(document.getElementById('hVit').value) || 0;
+            const nV = document.getElementById('nVit').value || "Vitras";
+            const optV = document.getElementById('optVit').value === 'yes';
+            const modV = document.getElementById('modelVit').value;
+
+            let mK = (jenis === 'impor') ? (L + 0.2) * 3 : Math.ceil((L + 0.2) / 0.4) * (T + 0.3);
+            detailArr.push({n: `Kain ${nK}`, q: mK.toFixed(2) + " m", s: hK, t: mK * hK});
+            detailArr.push({n: "Jahit", q: mK.toFixed(2) + " m", s: B.jahit, t: mK * B.jahit});
+
+            if(mod === 'smokring') {
+                let rQty = Math.ceil(L * 24); if(rQty % 2 !== 0) rQty++;
+                detailArr.push({n: "Smokring", q: rQty + " pcs", s: B.smokring, t: rQty * B.smokring});
+                detailArr.push({n: "Rollet", q: Math.max(L, 1).toFixed(2) + " m", s: B.rollet, t: Math.max(L, 1) * B.rollet});
+            } else {
+                detailArr.push({n: "Rell", q: Math.max(L, 1).toFixed(2) + " m", s: B.rell, t: Math.max(L, 1) * B.rell});
+            }
+
+            if (optV) {
+                if (modV === 'spiral') {
+                    let Lv = parseFloat(document.getElementById('Lv').value) || 0;
+                    let Tv = parseFloat(document.getElementById('Tv').value) || 0;
+                    let vQty = parseInt(document.getElementById('qtyV').value) || 1; 
+                    let mV = (Lv + 0.2) * 3 * vQty;
+                    detailArr.push({n: `Vitras ${nV}`, q: mV.toFixed(2) + " m", s: hV, t: mV * hV});
+                    detailArr.push({n: "Stick Spiral", q: vQty + " set", s: B.stick, t: B.stick * vQty});
+                } else { 
+                    let mV = (L + 0.2) * 3; 
+                    detailArr.push({n: `Vitras ${nV}`, q: mV.toFixed(2) + " m", s: hV, t: mV * hV});
+                    detailArr.push({n: "Rell Vitras", q: Math.max(L, 1).toFixed(2) + " m", s: B.rell, t: Math.max(L, 1) * B.rell});
+                }
+            }
+            detailArr.push({n: "Aksesori", q: "1 set", s: (B.hook + B.tali), t: (B.hook + B.tali)});
+            if(pasang) detailArr.push({n: "Pasang", q: "1 set", s: B.pasang, t: B.pasang});
+            dataItem = {...dataItem, nV, mod, optV, modV};
+        }
+
+        let html = "";
+        detailArr.forEach(x => { html += `<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding:4px 0"><span>${x.n} (${x.q})</span><span>${x.t.toLocaleString()}</span></div>`; });
+        dataItem.total = detailArr.reduce((s, i) => s + i.t, 0); 
+        dataItem.detailHTML = html;
+        db.push(dataItem); 
+        render();
+    }
+
+    function render() {
+        if (!db.length) { document.getElementById('result').innerHTML = ""; return; }
+        const cNama = document.getElementById('custNama').value;
+        const cTelp = document.getElementById('custTelp').value;
+        const cAlamat = document.getElementById('custAlamat').value;
+        const tgl = new Date().toLocaleDateString('id-ID');
+
+        // Fungsi bantu buat header
+        const buildHeader = (label, isEst) => `
+            <div class="print-header">
+                <img src="logo.png" class="print-logo">
+                <div class="info-pelanggan">
+                    <strong>${label}:</strong> ${cNama} (${cTelp})<br>
+                    <strong>Alamat:</strong> ${cAlamat}<br>
+                    <div style="margin-top:4px; font-size:0.8rem;">
+                        Tanggal Cetak: ${tgl}
+                        ${isEst ? '<br><span style="color:red; font-weight:bold;">* Estimasi berlaku s/d 7 hari ke depan</span>' : ''}
+                    </div>
+                </div>
+            </div>`;
+        
+        let hEst = `<div id="c-est" class="card"><h3>ESTIMASI HARGA</h3>${buildHeader('Penerima', true)}<table>`;
+        let hSPK = `<div id="c-spk" class="card"><h3>SPK PRODUKSI</h3>${buildHeader('Pesanan', false)}<table>`;
+        let gt = 0;
+
+        db.forEach((d, i) => {
+            let label = d.namaKustom || `Jendela ${i+1}`;
+            let rowKain = `• ${d.nK} (${d.L}x${d.T}m) (${d.mod || d.kat}) (${d.panel} Pnl)`;
+            let rowVit = d.optV ? `<br>• ${d.nV} (${d.modV === 'spiral' ? d.Lv+'x'+d.Tv+'m' : d.L+'x'+d.T+'m'})` : "";
+
+            hEst += `<tr><td><input type="text" value="${label}" oninput="db[${i}].namaKustom=this.value" style="width:100%"><br><small>${rowKain}${rowVit}</small><br><button class="btn-del" onclick="db.splice(${i},1);render()">Hapus</button> <button class="btn-view" onclick="showD(${i})">Detail</button></td><td style="text-align:right"><b>${d.total.toLocaleString()}</b></td></tr>`;
+            hSPK += `<tr><td><div class="group-header">${label}</div><div style="padding:10px;border:1px solid #444">${rowKain}${rowVit}</div></td></tr>`;
+            gt += d.total;
+        });
+
+        document.getElementById('result').innerHTML = hEst + `</table><div class="total-box">Total: <b>Rp ${gt.toLocaleString()}</b></div><button class="btn-print" onclick="printArea('c-est')">CETAK ESTIMASI</button></div>` + hSPK + `</table><button class="btn-print" onclick="printArea('c-spk')">CETAK SPK</button></div>`;
+    }
+
+    function showD(i) {
+        document.getElementById('modalBody').innerHTML = db[i].detailHTML + `<div style="font-weight:bold;color:var(--success);margin-top:10px">Total: ${db[i].total.toLocaleString()}</div>`;
+        document.getElementById('myModal').style.display='block';
+    }
+
+    function printArea(id) {
+        const content = document.getElementById(id).innerHTML;
+        const win = window.open('', '', 'height=800,width=1000');
+        win.document.write('<html><head><title>Print</title>');
+        document.querySelectorAll('style').forEach(s => win.document.write(s.outerHTML));
+        win.document.write('</head><body><div class="container">' + content + '</div></body></html>');
+        win.document.close();
+        win.onload = () => { win.focus(); setTimeout(() => { win.print(); win.close(); }, 400); };
+    }
+
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log(err)); }); }
+</script>
+</body>
+</html>
