@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Gorden Pro v6.8</title>
+    <title>Kalkulator Gorden Pro v7.0</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#bb86fc">
@@ -46,27 +46,42 @@
         
         /* HEADER CETAK */
         .print-header { display: none; align-items: flex-start; gap: 20px; border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 15px; }
-        .print-logo { max-width: 110px; height: auto; border-radius: 4px; }
-        .info-pelanggan { font-size: 0.9rem; flex: 1; line-height: 1.4; }
+        .print-logo { max-width: 100px; height: auto; border-radius: 4px; }
+        .info-pelanggan { font-size: 0.9rem; flex: 1; line-height: 1.4; color: black; }
 
+        /* CSS KHUSUS UNTUK PROSES CETAK */
         @media print {
             body { background: white !important; color: black !important; padding: 0; }
-            .container { max-width: 100%; width: 100%; }
-            .card { background: white !important; border: none !important; padding: 0; margin: 0; }
-            #input-section, .btn, .btn-del, .btn-view, .btn-print, .modal { display: none !important; }
+            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; }
+            
+            /* Sembunyikan elemen input dan tombol */
+            #data-konsumen-card, #input-section, .btn, .btn-del, .btn-view, .btn-print, .modal, .no-print { 
+                display: none !important; 
+            }
+
+            /* Sembunyikan satu bagian saat bagian lain dicetak */
+            .print-area { display: none; }
+            .printing .print-area { display: block !important; }
+
+            .card { background: white !important; border: none !important; padding: 0 !important; margin: 0 !important; }
             .print-header { display: flex !important; }
-            table, th, td { border: 1px solid black !important; color: black !important; background: white !important; }
+            
+            table { background: white !important; margin-bottom: 20px; }
+            table, th, td { border: 1px solid black !important; color: black !important; }
             th { background: #eee !important; }
-            .total-box { border: 2px solid black; background: white; color: black; }
-            .group-header { background: #ddd !important; color: black !important; border: 1px solid black; padding: 5px; }
-            input { border: none !important; font-weight: bold; color: black !important; background: transparent !important; }
+            
+            .total-box { border: 2px solid black !important; background: white !important; color: black !important; margin-top: 10px; }
+            .group-header { background: #ddd !important; color: black !important; border: 1px solid black !important; padding: 5px; }
+            
+            /* Pastikan input text di tabel (label jendela) terlihat seperti teks biasa */
+            input { border: none !important; font-weight: bold !important; color: black !important; background: transparent !important; padding: 0 !important; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="card">
+    <div id="data-konsumen-card" class="card">
         <h3>Data Konsumen</h3>
         <div class="row">
             <div class="col"><label>Nama Lengkap *</label><input type="text" id="custNama" placeholder="Nama"></div>
@@ -116,7 +131,7 @@
 
         <div class="check-row" style="display:flex;align-items:center;gap:8px;margin:10px 0">
             <input type="checkbox" id="chkPasang" checked style="width:auto"> 
-            <label for="chkPasang" style="font-size:0.85rem;text-transform:none">Biaya Pasang (Rp 50.000)</label>
+            <label for="chkPasang" style="font-size:0.85rem;color:white;text-transform:none">Biaya Pasang (Rp 50.000)</label>
         </div>
 
         <button class="btn" onclick="hitung()">TAMBAH KE DAFTAR</button>
@@ -201,12 +216,13 @@
 
             if (optV) {
                 if (modV === 'spiral') {
-                    let Lv = parseFloat(document.getElementById('Lv').value) || 0;
-                    let Tv = parseFloat(document.getElementById('Tv').value) || 0;
+                    let LvVal = parseFloat(document.getElementById('Lv').value) || 0;
+                    let TvVal = parseFloat(document.getElementById('Tv').value) || 0;
                     let vQty = parseInt(document.getElementById('qtyV').value) || 1; 
-                    let mV = (Lv + 0.2) * 3 * vQty;
+                    let mV = (LvVal + 0.2) * 3 * vQty;
                     detailArr.push({n: `Vitras ${nV}`, q: mV.toFixed(2) + " m", s: hV, t: mV * hV});
                     detailArr.push({n: "Stick Spiral", q: vQty + " set", s: B.stick, t: B.stick * vQty});
+                    dataItem.Lv = LvVal; dataItem.Tv = TvVal; dataItem.qtyV = vQty;
                 } else { 
                     let mV = (L + 0.2) * 3; 
                     detailArr.push({n: `Vitras ${nV}`, q: mV.toFixed(2) + " m", s: hV, t: mV * hV});
@@ -233,7 +249,6 @@
         const cAlamat = document.getElementById('custAlamat').value;
         const tgl = new Date().toLocaleDateString('id-ID');
 
-        // Fungsi bantu buat header
         const buildHeader = (label, isEst) => `
             <div class="print-header">
                 <img src="logo.png" class="print-logo">
@@ -247,8 +262,8 @@
                 </div>
             </div>`;
         
-        let hEst = `<div id="c-est" class="card"><h3>ESTIMASI HARGA</h3>${buildHeader('Penerima', true)}<table>`;
-        let hSPK = `<div id="c-spk" class="card"><h3>SPK PRODUKSI</h3>${buildHeader('Pesanan', false)}<table>`;
+        let hEst = `<div id="c-est" class="card print-area"><h3>ESTIMASI HARGA</h3>${buildHeader('Penerima', true)}<table>`;
+        let hSPK = `<div id="c-spk" class="card print-area"><h3>SPK PRODUKSI</h3>${buildHeader('Pesanan', false)}<table>`;
         let gt = 0;
 
         db.forEach((d, i) => {
@@ -256,12 +271,14 @@
             let rowKain = `• ${d.nK} (${d.L}x${d.T}m) (${d.mod || d.kat}) (${d.panel} Pnl)`;
             let rowVit = d.optV ? `<br>• ${d.nV} (${d.modV === 'spiral' ? d.Lv+'x'+d.Tv+'m' : d.L+'x'+d.T+'m'})` : "";
 
-            hEst += `<tr><td><input type="text" value="${label}" oninput="db[${i}].namaKustom=this.value" style="width:100%"><br><small>${rowKain}${rowVit}</small><br><button class="btn-del" onclick="db.splice(${i},1);render()">Hapus</button> <button class="btn-view" onclick="showD(${i})">Detail</button></td><td style="text-align:right"><b>${d.total.toLocaleString()}</b></td></tr>`;
+            hEst += `<tr><td><input type="text" value="${label}" oninput="db[${i}].namaKustom=this.value" style="width:100%"><br><small>${rowKain}${rowVit}</small><br><div class="no-print"><button class="btn-del" onclick="db.splice(${i},1);render()">Hapus</button> <button class="btn-view" onclick="showD(${i})">Detail</button></div></td><td style="text-align:right"><b>${d.total.toLocaleString()}</b></td></tr>`;
             hSPK += `<tr><td><div class="group-header">${label}</div><div style="padding:10px;border:1px solid #444">${rowKain}${rowVit}</div></td></tr>`;
             gt += d.total;
         });
 
-        document.getElementById('result').innerHTML = hEst + `</table><div class="total-box">Total: <b>Rp ${gt.toLocaleString()}</b></div><button class="btn-print" onclick="printArea('c-est')">CETAK ESTIMASI</button></div>` + hSPK + `</table><button class="btn-print" onclick="printArea('c-spk')">CETAK SPK</button></div>`;
+        document.getElementById('result').innerHTML = 
+            hEst + `</table><div class="total-box">Total: <b>Rp ${gt.toLocaleString()}</b></div><button class="btn-print" onclick="printKhusus('c-est')">CETAK ESTIMASI</button></div>` + 
+            hSPK + `</table><button class="btn-print" onclick="printKhusus('c-spk')">CETAK SPK</button></div>`;
     }
 
     function showD(i) {
@@ -269,14 +286,15 @@
         document.getElementById('myModal').style.display='block';
     }
 
-    function printArea(id) {
-        const content = document.getElementById(id).innerHTML;
-        const win = window.open('', '', 'height=800,width=1000');
-        win.document.write('<html><head><title>Print</title>');
-        document.querySelectorAll('style').forEach(s => win.document.write(s.outerHTML));
-        win.document.write('</head><body><div class="container">' + content + '</div></body></html>');
-        win.document.close();
-        win.onload = () => { win.focus(); setTimeout(() => { win.print(); win.close(); }, 400); };
+    // FUNGSI CETAK TANPA WINDOW BARU (Sangat Stabil di HP)
+    function printKhusus(id) {
+        // Tandai area mana yang mau dicetak
+        const allAreas = document.querySelectorAll('.print-area');
+        allAreas.forEach(el => el.classList.remove('printing'));
+        document.getElementById(id).classList.add('printing');
+        
+        // Panggil print bawaan browser
+        window.print();
     }
 
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log(err)); }); }
