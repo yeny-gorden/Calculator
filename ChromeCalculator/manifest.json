@@ -1,0 +1,23 @@
+{
+  "name": "Kalkulator Gorden Pro",
+  "short_name": "GordenCalc",
+  "description": "Aplikasi Kalkulator Estimasi Gorden dan SPK Produksi",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#bb86fc",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
