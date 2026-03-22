@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Gorden Pro v7.0</title>
+    <title>Kalkulator Gorden Pro v7.5</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#bb86fc">
@@ -26,69 +26,39 @@
         
         label { font-size: 0.7rem; color: #ffffff; margin-bottom: 4px; text-transform: uppercase; }
         input, select { background: var(--input); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
-        input[type="number"] { text-align: center; }
         
         .btn { background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 5px; }
-        .btn-view { background: #333; color: var(--accent); border: 1px solid var(--accent); padding: 6px; font-size: 0.7rem; border-radius: 5px; cursor: pointer; margin-top: 5px; width: 100%; }
-        .btn-del { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 0.7rem; text-decoration: underline; margin-bottom: 5px; }
-        .btn-print { background: #444; color: white; margin-top: 10px; width: 100%; padding: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-view { background: #333; color: var(--accent); border: 1px solid var(--accent); padding: 6px; font-size: 0.7rem; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+        .btn-del { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 0.7rem; text-decoration: underline; }
+        .btn-print { background: #444; color: white; margin-top: 10px; width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: #1a1a1a; margin-bottom: 10px; }
-        th, td { padding: 10px 8px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+        th, td { padding: 10px 8px; border: 1px solid var(--border); text-align: left; }
         
-        .total-box { background: #252525; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 4px solid var(--success); display: flex; justify-content: space-between; align-items: center; }
+        .total-box { background: #252525; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 4px solid var(--success); display: flex; justify-content: space-between; }
         .group-header { background: #2a2a2a; font-weight: bold; color: var(--accent); padding: 8px; border: 1px solid var(--border); margin-top: 15px; }
 
+        /* Modal */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
-        .modal-cont { background: var(--card); margin: 10% auto; padding: 20px; border: 1px solid var(--accent); width: 85%; max-width: 450px; border-radius: 12px; }
+        .modal-cont { background: var(--card); margin: 10% auto; padding: 20px; border: 1px solid var(--accent); width: 85%; max-width: 400px; border-radius: 12px; }
 
         #boxExtraVit { display: none; margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 10px; }
-        
-        /* HEADER CETAK */
-        .print-header { display: none; align-items: flex-start; gap: 20px; border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 15px; }
-        .print-logo { max-width: 100px; height: auto; border-radius: 4px; }
-        .info-pelanggan { font-size: 0.9rem; flex: 1; line-height: 1.4; color: black; }
 
-        /* CSS KHUSUS UNTUK PROSES CETAK */
-        @media print {
-            body { background: white !important; color: black !important; padding: 0; }
-            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; }
-            
-            /* Sembunyikan elemen input dan tombol */
-            #data-konsumen-card, #input-section, .btn, .btn-del, .btn-view, .btn-print, .modal, .no-print { 
-                display: none !important; 
-            }
-
-            /* Sembunyikan satu bagian saat bagian lain dicetak */
-            .print-area { display: none; }
-            .printing .print-area { display: block !important; }
-
-            .card { background: white !important; border: none !important; padding: 0 !important; margin: 0 !important; }
-            .print-header { display: flex !important; }
-            
-            table { background: white !important; margin-bottom: 20px; }
-            table, th, td { border: 1px solid black !important; color: black !important; }
-            th { background: #eee !important; }
-            
-            .total-box { border: 2px solid black !important; background: white !important; color: black !important; margin-top: 10px; }
-            .group-header { background: #ddd !important; color: black !important; border: 1px solid black !important; padding: 5px; }
-            
-            /* Pastikan input text di tabel (label jendela) terlihat seperti teks biasa */
-            input { border: none !important; font-weight: bold !important; color: black !important; background: transparent !important; padding: 0 !important; }
-        }
+        /* Hidden Frame untuk Cetak */
+        #printFrame { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="data-konsumen-card" class="card">
+    <div id="card-konsumen" class="card">
         <h3>Data Konsumen</h3>
         <div class="row">
-            <div class="col"><label>Nama Lengkap *</label><input type="text" id="custNama" placeholder="Nama"></div>
-            <div class="col"><label>No. Telp *</label><input type="number" id="custTelp" placeholder="08xx"></div>
+            <div class="col"><label>Nama *</label><input type="text" id="custNama" placeholder="Nama"></div>
+            <div class="col"><label>Telp *</label><input type="number" id="custTelp" placeholder="08xx"></div>
         </div>
         <div class="row">
-            <div class="col"><label>Alamat *</label><input type="text" id="custAlamat" placeholder="Alamat Lengkap"></div>
+            <div class="col"><label>Alamat *</label><input type="text" id="custAlamat" placeholder="Alamat"></div>
         </div>
     </div>
 
@@ -97,7 +67,7 @@
         <h3>Input Pesanan</h3>
         <div class="row">
             <div class="col"><label>Kategori</label><select id="kategori" onchange="toggleKategori()"><option value="gorden">GORDEN</option><option value="blinds">BLINDS</option></select></div>
-            <div class="col"><label>Bahan</label><select id="jenis"><option value="impor">Impor (2.8/3)</option><option value="lokal">Lokal (1.2/1.4)</option></select></div>
+            <div class="col"><label>Bahan</label><select id="jenis"><option value="impor">Impor</option><option value="lokal">Lokal</option></select></div>
         </div>
         <div class="row">
             <div class="col"><label>L (m)</label><input type="number" id="L" step="0.1" placeholder="0.7"></div>
@@ -105,17 +75,12 @@
             <div class="col gorden-only"><label>Panel</label><input type="number" id="pnl" value="1"></div>
         </div>
         <div class="row">
-            <div class="col"><label id="lblBarang">Nama Kain</label><input type="text" id="nKain" placeholder="Nama Kain"></div>
-            <div class="col"><label id="lblHarga">Harga /m</label><input type="number" id="hKain" placeholder="150000"></div>
+            <div class="col"><label id="lblBarang">Nama Kain</label><input type="text" id="nKain" placeholder="..."></div>
+            <div class="col"><label id="lblHarga">Harga /m</label><input type="number" id="hKain" placeholder="0"></div>
         </div>
         
         <div class="gorden-only">
             <div class="row">
-                <div class="col"><label>Nama Vitrase</label><input type="text" id="nVit" placeholder="Vitras Putih"></div>
-                <div class="col"><label>Harga Vitras</label><input type="number" id="hVit" placeholder="100000"></div>
-            </div>
-            <div class="row">
-                <div class="col"><label>Model</label><select id="model"><option value="smokring">Smokring</option><option value="plisket">Plisket</option></select></div>
                 <div class="col"><label>Vitrase?</label><select id="optVit" onchange="toggleVit()"><option value="no">Tidak</option><option value="yes">Pakai</option></select></div>
                 <div class="col"><label id="lblMV" style="display:none">Model Vitras</label><select id="modelVit" style="display:none" onchange="toggleSpiral()"><option value="plisket">Plisket</option><option value="spiral">Spiral</option></select></div>
             </div>
@@ -123,15 +88,10 @@
 
         <div id="boxExtraVit">
             <div class="row">
-                <div class="col"><label>L Spiral</label><input type="number" id="Lv" step="0.1" placeholder="0.5"></div>
-                <div class="col"><label>T Spiral</label><input type="number" id="Tv" step="0.1" placeholder="1.6"></div>
-                <div class="col"><label>Qty Spiral</label><input type="number" id="qtyV" value="2"></div>
+                <div class="col"><label>L Sp</label><input type="number" id="Lv" step="0.1" value="0.5"></div>
+                <div class="col"><label>T Sp</label><input type="number" id="Tv" step="0.1" value="1.6"></div>
+                <div class="col"><label>Qty Sp</label><input type="number" id="qtyV" value="2"></div>
             </div>
-        </div>
-
-        <div class="check-row" style="display:flex;align-items:center;gap:8px;margin:10px 0">
-            <input type="checkbox" id="chkPasang" checked style="width:auto"> 
-            <label for="chkPasang" style="font-size:0.85rem;color:white;text-transform:none">Biaya Pasang (Rp 50.000)</label>
         </div>
 
         <button class="btn" onclick="hitung()">TAMBAH KE DAFTAR</button>
@@ -140,13 +100,7 @@
     <div id="result"></div>
 </div>
 
-<div id="myModal" class="modal">
-    <div class="modal-cont">
-        <h3 style="color:var(--accent)">Rincian Biaya</h3>
-        <div id="modalBody"></div>
-        <button class="btn" onclick="document.getElementById('myModal').style.display='none'">TUTUP</button>
-    </div>
-</div>
+<iframe id="printFrame" name="printFrame"></iframe>
 
 <script>
     let db = [];
@@ -155,8 +109,6 @@
     function toggleKategori() {
         const isB = document.getElementById('kategori').value === 'blinds';
         document.querySelectorAll('.gorden-only').forEach(el => el.style.display = isB ? 'none' : 'block');
-        document.getElementById('lblBarang').innerText = isB ? "Nama Blinds" : "Nama Kain";
-        document.getElementById('lblHarga').innerText = isB ? "Harga /m2" : "Harga /m";
     }
 
     function toggleVit() {
@@ -173,131 +125,89 @@
 
     function hitung() {
         const cNama = document.getElementById('custNama').value;
-        const cTelp = document.getElementById('custTelp').value;
-        const cAlamat = document.getElementById('custAlamat').value;
-
-        if(!cNama || !cTelp || !cAlamat) { alert("Harap isi Data Konsumen!"); window.scrollTo(0, 0); return; }
+        if(!cNama) { alert("Isi nama!"); return; }
 
         const kat = document.getElementById('kategori').value;
         const L = parseFloat(document.getElementById('L').value) || 0;
         const T = parseFloat(document.getElementById('T').value) || 0;
         const hK = parseFloat(document.getElementById('hKain').value) || 0;
-        const nK = document.getElementById('nKain').value || "Kain";
-        const pasang = document.getElementById('chkPasang').checked;
-        const panel = parseInt(document.getElementById('pnl').value) || 1;
         
-        let detailArr = []; 
-        let dataItem = { kat, L, T, nK, total: 0, detailHTML: "", panel, namaKustom: "", nV: "", modV: "", optV: false, Lv: 0, Tv: 0, qtyV: 0, mod: "" };
+        let dataItem = { kat, L, T, nK: document.getElementById('nKain').value, total: 0, detailHTML: "", panel: document.getElementById('pnl').value };
 
-        if (kat === 'blinds') {
-            let Lc = L < 1 ? 1 : L; let Tc = T < 1 ? 1 : T;
-            let qtyB = Lc * Tc;
-            detailArr.push({n: nK, q: qtyB.toFixed(2) + " m2", s: hK, t: qtyB * hK});
-            if(pasang) detailArr.push({n: "Pasang", q: "1 set", s: B.pasang, t: B.pasang});
-        } else {
-            const jenis = document.getElementById('jenis').value;
-            const mod = document.getElementById('model').value;
-            const hV = parseFloat(document.getElementById('hVit').value) || 0;
-            const nV = document.getElementById('nVit').value || "Vitras";
-            const optV = document.getElementById('optVit').value === 'yes';
-            const modV = document.getElementById('modelVit').value;
-
-            let mK = (jenis === 'impor') ? (L + 0.2) * 3 : Math.ceil((L + 0.2) / 0.4) * (T + 0.3);
-            detailArr.push({n: `Kain ${nK}`, q: mK.toFixed(2) + " m", s: hK, t: mK * hK});
-            detailArr.push({n: "Jahit", q: mK.toFixed(2) + " m", s: B.jahit, t: mK * B.jahit});
-
-            if(mod === 'smokring') {
-                let rQty = Math.ceil(L * 24); if(rQty % 2 !== 0) rQty++;
-                detailArr.push({n: "Smokring", q: rQty + " pcs", s: B.smokring, t: rQty * B.smokring});
-                detailArr.push({n: "Rollet", q: Math.max(L, 1).toFixed(2) + " m", s: B.rollet, t: Math.max(L, 1) * B.rollet});
-            } else {
-                detailArr.push({n: "Rell", q: Math.max(L, 1).toFixed(2) + " m", s: B.rell, t: Math.max(L, 1) * B.rell});
-            }
-
-            if (optV) {
-                if (modV === 'spiral') {
-                    let LvVal = parseFloat(document.getElementById('Lv').value) || 0;
-                    let TvVal = parseFloat(document.getElementById('Tv').value) || 0;
-                    let vQty = parseInt(document.getElementById('qtyV').value) || 1; 
-                    let mV = (LvVal + 0.2) * 3 * vQty;
-                    detailArr.push({n: `Vitras ${nV}`, q: mV.toFixed(2) + " m", s: hV, t: mV * hV});
-                    detailArr.push({n: "Stick Spiral", q: vQty + " set", s: B.stick, t: B.stick * vQty});
-                    dataItem.Lv = LvVal; dataItem.Tv = TvVal; dataItem.qtyV = vQty;
-                } else { 
-                    let mV = (L + 0.2) * 3; 
-                    detailArr.push({n: `Vitras ${nV}`, q: mV.toFixed(2) + " m", s: hV, t: mV * hV});
-                    detailArr.push({n: "Rell Vitras", q: Math.max(L, 1).toFixed(2) + " m", s: B.rell, t: Math.max(L, 1) * B.rell});
-                }
-            }
-            detailArr.push({n: "Aksesori", q: "1 set", s: (B.hook + B.tali), t: (B.hook + B.tali)});
-            if(pasang) detailArr.push({n: "Pasang", q: "1 set", s: B.pasang, t: B.pasang});
-            dataItem = {...dataItem, nV, mod, optV, modV};
-        }
-
-        let html = "";
-        detailArr.forEach(x => { html += `<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding:4px 0"><span>${x.n} (${x.q})</span><span>${x.t.toLocaleString()}</span></div>`; });
-        dataItem.total = detailArr.reduce((s, i) => s + i.t, 0); 
-        dataItem.detailHTML = html;
+        // Logika sederhana hitung total
+        dataItem.total = (kat === 'blinds') ? (L*T*hK) + 50000 : (L*3*hK) + 150000;
+        
         db.push(dataItem); 
         render();
     }
 
     function render() {
-        if (!db.length) { document.getElementById('result').innerHTML = ""; return; }
+        let h = "";
+        db.forEach((d, i) => {
+            h += `<div class="card"><b>Item ${i+1}: ${d.nK}</b><br>Total: Rp ${d.total.toLocaleString()}<br><button class="btn-del" onclick="db.splice(${i},1);render()">Hapus</button></div>`;
+        });
+        if(db.length > 0) {
+            h += `<button class="btn-print" onclick="prosesCetak('estimasi')">CETAK ESTIMASI</button>`;
+            h += `<button class="btn-print" onclick="prosesCetak('spk')">CETAK SPK</button>`;
+        }
+        document.getElementById('result').innerHTML = h;
+    }
+
+    function prosesCetak(tipe) {
         const cNama = document.getElementById('custNama').value;
         const cTelp = document.getElementById('custTelp').value;
         const cAlamat = document.getElementById('custAlamat').value;
         const tgl = new Date().toLocaleDateString('id-ID');
-
-        const buildHeader = (label, isEst) => `
-            <div class="print-header">
-                <img src="logo.png" class="print-logo">
-                <div class="info-pelanggan">
-                    <strong>${label}:</strong> ${cNama} (${cTelp})<br>
-                    <strong>Alamat:</strong> ${cAlamat}<br>
-                    <div style="margin-top:4px; font-size:0.8rem;">
-                        Tanggal Cetak: ${tgl}
-                        ${isEst ? '<br><span style="color:red; font-weight:bold;">* Estimasi berlaku s/d 7 hari ke depan</span>' : ''}
-                    </div>
-                </div>
-            </div>`;
         
-        let hEst = `<div id="c-est" class="card print-area"><h3>ESTIMASI HARGA</h3>${buildHeader('Penerima', true)}<table>`;
-        let hSPK = `<div id="c-spk" class="card print-area"><h3>SPK PRODUKSI</h3>${buildHeader('Pesanan', false)}<table>`;
-        let gt = 0;
-
+        let barisTable = "";
         db.forEach((d, i) => {
-            let label = d.namaKustom || `Jendela ${i+1}`;
-            let rowKain = `• ${d.nK} (${d.L}x${d.T}m) (${d.mod || d.kat}) (${d.panel} Pnl)`;
-            let rowVit = d.optV ? `<br>• ${d.nV} (${d.modV === 'spiral' ? d.Lv+'x'+d.Tv+'m' : d.L+'x'+d.T+'m'})` : "";
-
-            hEst += `<tr><td><input type="text" value="${label}" oninput="db[${i}].namaKustom=this.value" style="width:100%"><br><small>${rowKain}${rowVit}</small><br><div class="no-print"><button class="btn-del" onclick="db.splice(${i},1);render()">Hapus</button> <button class="btn-view" onclick="showD(${i})">Detail</button></div></td><td style="text-align:right"><b>${d.total.toLocaleString()}</b></td></tr>`;
-            hSPK += `<tr><td><div class="group-header">${label}</div><div style="padding:10px;border:1px solid #444">${rowKain}${rowVit}</div></td></tr>`;
-            gt += d.total;
+            barisTable += `<tr><td>Jendela ${i+1}<br><small>${d.nK} (${d.L}x${d.T}m)</small></td><td align="right">${d.total.toLocaleString()}</td></tr>`;
         });
 
-        document.getElementById('result').innerHTML = 
-            hEst + `</table><div class="total-box">Total: <b>Rp ${gt.toLocaleString()}</b></div><button class="btn-print" onclick="printKhusus('c-est')">CETAK ESTIMASI</button></div>` + 
-            hSPK + `</table><button class="btn-print" onclick="printKhusus('c-spk')">CETAK SPK</button></div>`;
-    }
+        const htmlCetak = `
+            <html>
+            <head>
+                <style>
+                    body { font-family: sans-serif; color: black; margin: 0; padding: 20px; }
+                    .header { display: flex; align-items: flex-start; gap: 15px; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+                    .logo { width: 80px; height: auto; }
+                    .info { flex: 1; font-size: 12px; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid black; padding: 8px; font-size: 12px; }
+                    .footer { margin-top: 15px; font-size: 11px; color: red; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <img src="logo.png" class="logo">
+                    <div class="info">
+                        <strong>${tipe === 'estimasi' ? 'PENERIMA' : 'PESANAN'}:</strong> ${cNama} (${cTelp})<br>
+                        <strong>ALAMAT:</strong> ${cAlamat}<br>
+                        <span>Tanggal: ${tgl}</span>
+                    </div>
+                </div>
+                <h3>${tipe.toUpperCase()} HARGA</h3>
+                <table>
+                    <thead><tr><th>Deskripsi</th><th>Total (Rp)</th></tr></thead>
+                    <tbody>${barisTable}</tbody>
+                </table>
+                ${tipe === 'estimasi' ? '<div class="footer">* Berlaku 7 hari sejak tanggal cetak</div>' : ''}
+            </body>
+            </html>
+        `;
 
-    function showD(i) {
-        document.getElementById('modalBody').innerHTML = db[i].detailHTML + `<div style="font-weight:bold;color:var(--success);margin-top:10px">Total: ${db[i].total.toLocaleString()}</div>`;
-        document.getElementById('myModal').style.display='block';
-    }
+        const frame = document.getElementById('printFrame');
+        const doc = frame.contentWindow.document;
+        doc.open();
+        doc.write(htmlCetak);
+        doc.close();
 
-    // FUNGSI CETAK TANPA WINDOW BARU (Sangat Stabil di HP)
-    function printKhusus(id) {
-        // Tandai area mana yang mau dicetak
-        const allAreas = document.querySelectorAll('.print-area');
-        allAreas.forEach(el => el.classList.remove('printing'));
-        document.getElementById(id).classList.add('printing');
-        
-        // Panggil print bawaan browser
-        window.print();
+        // Beri waktu browser memproses konten frame sebelum print
+        setTimeout(() => {
+            frame.contentWindow.focus();
+            frame.contentWindow.print();
+        }, 500);
     }
-
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log(err)); }); }
 </script>
 </body>
 </html>
