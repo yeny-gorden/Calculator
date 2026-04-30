@@ -5,74 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Estimasi Gorden</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 500px; margin: auto; background-color: #f9f9f9; }
-        .window-row { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: white; }
-        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
-        .btn-add { background: #6c757d; color: white; }
-        
-        /* Tombol Biru */
-        .btn-send { background: #007bff; color: white; font-size: 16px; }
-        
-        /* Teks footer lebih besar dan jelas */
-        .footer-note { font-size: 14px; font-weight: bold; display: block; margin-top: 5px; opacity: 0.9; }
+        body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; background-color: #f4f7f6; }
+        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .window-row { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-add { background: #6c757d; color: white; margin-bottom: 10px; }
+        .btn-send { background: #007bff; color: white; }
     </style>
 </head>
 <body>
-    <h2>Estimasi Biaya Gorden</h2>
-    <p>Silakan masukkan nomor WA dan ukuran jendela Anda:</p>
-    
-    <input type="text" id="wa" placeholder="Nomor WhatsApp (Contoh: 0812xxx)" required>
-    
+<div class="container">
+    <h2 style="text-align: center;">Estimasi Gorden</h2>
+    <h3 style="text-align: center,">Masukan nomor whatsapp dan data ukuran,Admin kami akan segera menghubungi Anda</h3>
+    <input type="text" id="wa" placeholder="Nomor WhatsApp" required>
     <div id="windowsContainer">
         <div class="window-row">
-            <input type="number" class="lebar" placeholder="Lebar Jendela (m)" step="0.1" required>
-            <input type="number" class="tinggi" placeholder="Tinggi Jendela (m)" step="0.1" required>
+            <input type="number" class="lebar" placeholder="Lebar (m)" step="0.01">
+            <input type="number" class="tinggi" placeholder="Tinggi (m)" step="0.01">
         </div>
     </div>
-    
-    <button class="btn-add" onclick="tambahJendela()">+ Tambah Jendela Lain</button>
-    <button class="btn-send" onclick="kirimData()">
-        Kirim & Dapatkan Estimasi via WhatsApp
-        <span class="footer-note">Admin kami akan segera menghubungi Anda</span>
-    </button>
+    <button class="btn-add" onclick="addWin()">+ Tambah Jendela</button>
+    <button id="btnS" class="btn-send" onclick="send()">Kirim Data Ukuran Dan Admin Kami Akan Membantu Menghitung Estimasinya.</button>
+</div>
+<script>
+    function addWin() {
+        const c = document.getElementById('windowsContainer');
+        const d = document.createElement('div');
+        d.className = 'window-row';
+        d.innerHTML = '<input type="number" class="lebar" placeholder="Lebar (m)" step="0.01"><input type="number" class="tinggi" placeholder="Tinggi (m)" step="0.01">';
+        c.appendChild(d);
+    }
 
-    <script>
-        function tambahJendela() {
-            const container = document.getElementById('windowsContainer');
-            const div = document.createElement('div');
-            div.className = 'window-row';
-            div.innerHTML = '<input type="number" class="lebar" placeholder="Lebar Jendela (m)" step="0.1"><input type="number" class="tinggi" placeholder="Tinggi Jendela (m)" step="0.1">';
-            container.appendChild(div);
-        }
+    function _auth() {
+        const a = "8728443716";
+        const b = "AAHtTWLXFO6jmS_pTHq-ace44kMrO22cq8s";
+        return a + ":" + b;
+    }
 
-        async function kirimData() {
-            const wa = document.getElementById('wa').value;
-            const rows = document.querySelectorAll('.window-row');
-            let windows = [];
-            
-            rows.forEach(row => {
-                const l = row.querySelector('.lebar').value;
-                const t = row.querySelector('.tinggi').value;
-                if(l && t) windows.push({ lebar: l, tinggi: t });
+    async function send() {
+        const w = document.getElementById('wa').value;
+        const r = document.querySelectorAll('.window-row');
+        const b = document.getElementById('btnS');
+        let x = [];
+        r.forEach(i => {
+            const l = i.querySelector('.lebar').value;
+            const t = i.querySelector('.tinggi').value;
+            if(l && t) x.push({ l, t });
+        });
+        if(!w || x.length === 0) return alert("Lengkapi data!");
+        const t = _auth();
+        const cid = "6150459692";
+        let m = `*PESANAN BARU*\nWA: ${w}\n`;
+        x.forEach((v, i) => { m += `${i+1}. L: ${v.l}m, T: ${v.t}m\n`; });
+        try {
+            b.disabled = true;
+            b.innerText = "...";
+            await fetch(`https://api.telegram.org/bot${t}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: cid, text: m, parse_mode: "Markdown" })
             });
-
-            if(!wa || windows.length === 0) return alert("Harap isi No WA dan minimal satu ukuran jendela.");
-
-            const url = "https://script.google.com/macros/s/AKfycbyGNos4Y8B-SWxG2T5z_vl9v3-z8MPoRI-A7A5PywRW660ZcKSmCAOXTuQrPKfzEThP/exec";
-
-            try {
-                alert('Mengirim data...');
-                await fetch(url, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ wa, windows })
-                });
-                alert('Terima kasih! Data telah terkirim. Admin kami akan segera menghubungi Anda.');
-            } catch(e) {
-                alert('Terjadi kesalahan, silakan coba lagi nanti.');
-            }
+            alert('Terkirim!');
+            location.reload();
+        } catch(e) {
+            alert('Gagal.');
+            b.disabled = false;
+            b.innerText = "Kirim Data";
         }
-    </script>
+    }
+</script>
 </body>
 </html>
