@@ -3,77 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Estimasi Gorden</title>
+    <title>Kalkulator Gorden</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; background-color: #f4f7f6; }
-        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .window-row { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-add { background: #6c757d; color: white; margin-bottom: 10px; }
-        .btn-send { background: #007bff; color: white; }
+        /* Desain Responsif & Tema Gelap */
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #121212; 
+            color: #e0e0e0; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh;
+            align-items: center;
+        }
+        .container { 
+            width: 100%; 
+            max-width: 450px; 
+            background: #1e1e1e; 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        h2 { color: #ffffff; text-align: center; margin-bottom: 25px; }
+        label { font-weight: 500; display: block; margin-top: 15px; color: #b3b3b3; }
+        
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            background: #2c2c2c; 
+            color: white; 
+            font-size: 16px; 
+        }
+        
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background: #25d366; 
+            color: #000; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            transition: background 0.3s; 
+        }
+        button:hover { background: #1ebd5d; }
+        
+        .result-box { 
+            margin-top: 25px; 
+            padding: 20px; 
+            background: #252525; 
+            border: 1px solid #333; 
+            border-radius: 10px; 
+            display: none; 
+            text-align: center; 
+        }
+        .price { font-size: 1.6em; color: #25d366; font-weight: bold; display: block; margin: 10px 0; }
+        
+        .note { font-size: 0.8em; color: #777; margin-top: 20px; line-height: 1.5; border-top: 1px solid #333; padding-top: 15px; }
+        .wa-link { color: #25d366; font-weight: bold; text-decoration: none; }
+        
+        /* Tombol WhatsApp Mengambang */
+        .wa-float { position: fixed; bottom: 30px; right: 30px; z-index: 100; transition: transform 0.3s; }
+        .wa-float:hover { transform: scale(1.1); }
+        .wa-float img { width: 60px; height: 60px; }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <h2 style="text-align: center;">Estimasi Gorden</h2>
-    <h3 style="text-align: center,">Masukan nomor whatsapp dan data ukuran,Admin kami akan segera menghubungi Anda</h3>
-    <input type="text" id="wa" placeholder="Nomor WhatsApp" required>
-    <div id="windowsContainer">
-        <div class="window-row">
-            <input type="number" class="lebar" placeholder="Lebar (m)" step="0.01">
-            <input type="number" class="tinggi" placeholder="Tinggi (m)" step="0.01">
-        </div>
+    <h2>Estimasi Biaya Gorden</h2>
+    <label>Masukkan Lebar Jendela (Meter):</label>
+    <input type="number" id="lebar" step="0.1" placeholder="Contoh: 1.5">
+    
+    <button onclick="hitung()">Hitung Estimasi</button>
+
+    <div class="result-box" id="hasil">
+        Estimasi Biaya:
+        <span class="price" id="totalHarga"></span>
+        <p style="font-size: 0.9em; color: #ccc;">
+            Ini adalah estimasi awal untuk kualitas bahan terbaik kami.
+        </p>
+        <a href="https://wa.me/6289504215020?text=Halo,%20saya%20sudah%20hitung%20estimasi%20gorden.%20Bisa%20dibantu%20tampilkan%20katalog%20bahan%20atau%20pilihan%20model%20lainnya?" 
+           class="wa-link" target="_blank">Chat Admin untuk Konsultasi</a>
     </div>
-    <button class="btn-add" onclick="addWin()">+ Tambah Jendela</button>
-    <button id="btnS" class="btn-send" onclick="send()">Kirim Data Ukuran Dan Admin Kami Akan Membantu Menghitung Estimasinya.</button>
+
+    <div class="note">
+        <p><i>* Harga dapat berubah tergantung model dan jenis bahan.</i></p>
+        <p><i>* Harga sudah termasuk biaya aksesoris (hook, tali, rell) dan jasa instalasi.</i></p>
+    </div>
 </div>
+
+<a href="https://wa.me/6289504215020" class="wa-float" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+</a>
+
 <script>
-    function addWin() {
-        const c = document.getElementById('windowsContainer');
-        const d = document.createElement('div');
-        d.className = 'window-row';
-        d.innerHTML = '<input type="number" class="lebar" placeholder="Lebar (m)" step="0.01"><input type="number" class="tinggi" placeholder="Tinggi (m)" step="0.01">';
-        c.appendChild(d);
-    }
-
-    function _auth() {
-        const a = "8728443716";
-        const b = "AAHtTWLXFO6jmS_pTHq-ace44kMrO22cq8s";
-        return a + ":" + b;
-    }
-
-    async function send() {
-        const w = document.getElementById('wa').value;
-        const r = document.querySelectorAll('.window-row');
-        const b = document.getElementById('btnS');
-        let x = [];
-        r.forEach(i => {
-            const l = i.querySelector('.lebar').value;
-            const t = i.querySelector('.tinggi').value;
-            if(l && t) x.push({ l, t });
-        });
-        if(!w || x.length === 0) return alert("Lengkapi data!");
-        const t = _auth();
-        const cid = "6150459692";
-        let m = `*PESANAN BARU*\nWA: ${w}\n`;
-        x.forEach((v, i) => { m += `${i+1}. L: ${v.l}m, T: ${v.t}m\n`; });
-        try {
-            b.disabled = true;
-            b.innerText = "...";
-            await fetch(`https://api.telegram.org/bot${t}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: cid, text: m, parse_mode: "Markdown" })
-            });
-            alert('Terkirim!');
-            location.reload();
-        } catch(e) {
-            alert('Gagal.');
-            b.disabled = false;
-            b.innerText = "Kirim Data";
+    function hitung() {
+        let L = parseFloat(document.getElementById('lebar').value);
+        if (isNaN(L) || L <= 0) {
+            alert("Silakan masukkan lebar yang valid");
+            return;
         }
+
+        let L_hitung = L < 1 ? 1 : L;
+        
+        let kain = (L + 0.2) * 3 * 150000;
+        let jahit = (L + 0.2) * 3 * 20000;
+        let rell = L_hitung * 50000;
+        let hook = 40000;
+        let tali = 38000;
+        let instalasi = L_hitung * 50000;
+
+        let total = kain + jahit + rell + hook + tali + instalasi;
+
+        document.getElementById('totalHarga').innerHTML = "Mulai dari Rp " + Math.round(total).toLocaleString('id-ID');
+        document.getElementById('hasil').style.display = 'block';
     }
 </script>
+
 </body>
 </html>
